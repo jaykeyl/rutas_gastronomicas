@@ -16,9 +16,14 @@ export default function DrawerLayout() {
         name="(tabs)"
         options={{ title: "Inicio", drawerLabel: "Inicio" }}
       />
+
       <Drawer.Screen
-        name="perfil/index"         
-        options={{ title: "Perfil", drawerLabel: "Perfil" }}
+        name="perfil" 
+        options={{
+          title: "Perfil",
+          drawerLabel: "Perfil",
+
+        }}
       />
     </Drawer>
   );

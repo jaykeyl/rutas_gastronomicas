@@ -20,12 +20,17 @@ type CatalogState = {
 
 export const useCatalogStore = create<CatalogState>((set, get) => ({
   platos: [],
-  favoritos: new Set(),
+  favoritos: new Set<string>(),
+
   setPlatos: (items) => set({ platos: items }),
-  toggleFavorito: (id) => {
-    const favs = new Set(get().favoritos);
-    favs.has(id) ? favs.delete(id) : favs.add(id);
-    set({ favoritos: favs });
-  },
+
+  toggleFavorito: (id) =>
+    set((state) => {
+      const next = new Set(state.favoritos);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return { favoritos: next };
+    }),
+
   isFavorito: (id) => get().favoritos.has(id),
 }));

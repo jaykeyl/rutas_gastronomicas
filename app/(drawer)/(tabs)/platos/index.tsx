@@ -1,3 +1,4 @@
+// app/(drawer)/(tabs)/platos/index.tsx
 import { FlatList, Text, View } from "react-native";
 import { useMemo, useState, useEffect } from "react";
 import { useThemeColors } from "../../../hooks/useThemeColors";
@@ -6,6 +7,7 @@ import SearchBar from "../../../components/SearchBar";
 import ZonaFilter from "../../../components/ZonaFilter";
 import DishCard, { Dish } from "../../../components/DishCard";
 import data from "../../../data/platos.json";
+import { useCatalogStore } from "../../../store/catalog";  // ← add
 
 const ZONAS = ["Todos","Miraflores","Sopocachi","El Alto","San Pedro"] as const;
 
@@ -13,9 +15,14 @@ export default function PlatosList() {
   const { colors } = useThemeColors();
   const [query, setQuery] = useState("");
   const [zona, setZona] = useState<(typeof ZONAS)[number]>("Todos");
-  const [platos, setPlatos] = useState<Dish[]>([]);
 
-  useEffect(() => { setPlatos(data as unknown as Dish[]); }, []);
+  const platos = useCatalogStore(s => s.platos);           // ← from store
+  const setPlatos = useCatalogStore(s => s.setPlatos);     // ← from store
+
+  useEffect(() => {
+    // hydrate the store once
+    if (!platos.length) setPlatos(data as Dish[]);
+  }, [platos.length, setPlatos]);
 
   const filtrados = useMemo(() =>
     platos
