@@ -9,6 +9,7 @@ export default function DrawerLayout() {
       screenOptions={{
         headerShown: false,
         drawerActiveTintColor: colors.primary,
+        drawerInactiveTintColor: colors.text,
         drawerStyle: { backgroundColor: colors.background },
       }}
     >
@@ -16,14 +17,13 @@ export default function DrawerLayout() {
         name="(tabs)"
         options={{ title: "Inicio", drawerLabel: "Inicio" }}
       />
-
       <Drawer.Screen
-        name="perfil" 
-        options={{
-          title: "Perfil",
-          drawerLabel: "Perfil",
-
-        }}
+        name="perfil"
+        options={{ title: "Perfil", drawerLabel: "Perfil" }}
+      />
+      <Drawer.Screen
+        name="settings/index"
+        options={{ title: "Ajustes", drawerLabel: "Ajustes" }}
       />
     </Drawer>
   );

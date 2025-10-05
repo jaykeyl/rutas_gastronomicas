@@ -1,10 +1,212 @@
 ﻿[
-  { "id":"1","nombre":"Plato Paceño Tradicional","precioReferencial":25,"zona":"Sopocachi","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Filete a la plancha con queso frito, choclo, habas y papa andina.","picosidad":1 },
-  { "id":"2","nombre":"Fricase","precioReferencial":28,"zona":"Miraflores","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Cerdo en caldo espeso con ají amarillo, mote y pan.","picosidad":3 },
-  { "id":"3","nombre":"Ají de Fideos","precioReferencial":22,"zona":"San Pedro","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Fideos guisados con ají y carne.","picosidad":4 },
-  { "id":"4","nombre":"Sopa de Maní","precioReferencial":18,"zona":"El Alto","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Cremosa con maní, papa, zanahoria y carne.","picosidad":0 },
-  { "id":"5","nombre":"Chairo Paceño","precioReferencial":20,"zona":"Sopocachi","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Sopa de chuño, carne y verduras; sabor andino clásico.","picosidad":1 },
-  { "id":"6","nombre":"Silpancho","precioReferencial":30,"zona":"Miraflores","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Milanesa grande sobre arroz y papa con huevo y llajua.","picosidad":3 },
-  { "id":"7","nombre":"Pique Macho","precioReferencial":35,"zona":"San Pedro","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Carne con salchicha, papas, huevo y ají.","picosidad":4 },
-  { "id":"8","nombre":"Sajta de Pollo","precioReferencial":24,"zona":"El Alto","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Pollo con ají amarillo, papa y tunta.","picosidad":2 }
+  {
+    "id": "1",
+    "nombre": "Plato Paceño Tradicional",
+    "precioReferencial": 25,
+    "zona": "Sopocachi",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Filete a la plancha con queso frito, choclo, habas y papa andina.",
+    "picosidad": 1,
+    "descripcion": "El emblemático Plato Paceño es una celebración de los sabores andinos en su máxima expresión. Este plato combina un jugoso filete de res a la plancha perfectamente sellado, acompañado de generosas porciones de queso humacha frito hasta alcanzar ese punto dorado y crujiente por fuera mientras mantiene su cremosidad interior. Las habas frescas cocidas a la perfección, el choclo tierno de grano grande característico de los valles bolivianos, y las papas andinas de variedades nativas como la imilla o la waycha, completan esta sinfonía culinaria. Se sirve con una llajua suave al costado y a menudo incluye una ensalada fresca de lechuga y tomate. Es el plato perfecto para experimentar la esencia de La Paz en cada bocado."
+  },
+  {
+    "id": "2",
+    "nombre": "Fricase",
+    "precioReferencial": 28,
+    "zona": "Miraflores",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Cerdo en caldo espeso con ají amarillo, mote y pan.",
+    "picosidad": 3,
+    "descripcion": "El Fricase paceño es un plato tradicional que se remonta a tiempos coloniales, perfecto para las mañanas frías de La Paz. Consiste en suculentos trozos de carne de cerdo cocidos lentamente en un caldo espeso y aromático preparado con ají colorado y amarillo molido, cebolla, ajo y especias secretas que cada familia guarda celosamente. El mote pelado (maíz blanco gigante) aporta textura y sustancia al plato. Se acompaña con chuño phuti (chuño remojado y cocido), papas enteras y abundante pan francés crujiente para mojar en el delicioso caldo picante. La llajua y el perejil fresco picado son el toque final. Tradicionalmente se consume los domingos por la mañana y es considerado el mejor remedio para curar la resaca."
+  },
+  {
+    "id": "3",
+    "nombre": "Ají de Fideos",
+    "precioReferencial": 22,
+    "zona": "San Pedro",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Fideos guisados con ají y carne.",
+    "picosidad": 4,
+    "descripcion": "El Ají de Fideos es un plato contundente y profundamente reconfortante que combina la herencia italiana de la pasta con los sabores picantes andinos. Los fideos largos se cocinan al dente y luego se mezclan con un ahogado rojizo intenso preparado con abundante ají colorado molido, cebolla, tomate, ajo y comino. La carne de res se corta en trozos medianos y se cocina hasta quedar tierna dentro de esta salsa especiada. Arvejas frescas, zanahoria en cubos y papas amarillas completan el guiso. Se sirve bien caliente con arroz blanco al costado y una porción generosa de llajua para quienes deseen aumentar el nivel de picante. Las saritas (tiras delgadas de papa frita) encima son opcionales pero altamente recomendadas para agregar un contraste crujiente."
+  },
+  {
+    "id": "4",
+    "nombre": "Sopa de Maní",
+    "precioReferencial": 18,
+    "zona": "El Alto",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Cremosa con maní, papa, zanahoria y carne.",
+    "picosidad": 0,
+    "descripcion": "La Sopa de Maní es uno de los platos más reconfortantes y nutritivos de la gastronomía paceña, ideal para combatir el frío de la altura. Su base cremosa se prepara moliendo maní tostado hasta formar una pasta suave que se integra al caldo de carne, creando una textura aterciopelada única. Lleva generosos trozos de carne de res, papas amarillas cortadas en cubos, zanahoria, arvejas y a veces fideos cabello de ángel que le dan más cuerpo. El sabor es suave, ligeramente dulce por el maní, y profundamente satisfactorio. Se sazona con sal, pimienta, comino y perejil fresco picado. Algunos restaurantes agregan un toque de ají amarillo para darle un ligero picorcito, pero tradicionalmente es un plato sin picante, perfecto para toda la familia incluyendo niños y personas mayores."
+  },
+  {
+    "id": "5",
+    "nombre": "Chairo Paceño",
+    "precioReferencial": 20,
+    "zona": "Sopocachi",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Sopa de chuño, carne y verduras; sabor andino clásico.",
+    "picosidad": 1,
+    "descripcion": "El Chairo es posiblemente el plato más representativo de La Paz, con raíces que se remontan a la época precolombina. Esta sopa espesa y nutritiva tiene como ingrediente estrella el chuño (papa deshidratada andina) que le otorga una textura única y un sabor terroso característico. Lleva carne de cordero o res en trozos generosos, papas blancas, zanahoria, habas verdes, arvejas y trigo mote. El caldo se prepara durante horas, permitiendo que todos los sabores se integren perfectamente. El hierba buena fresca picada que se agrega al final le da un aroma incomparable. Se sirve bien caliente, casi hirviendo, y es tradición agregarte llajua al gusto. Perfecto para el almuerzo en días fríos, este plato te llena de energía y te conecta con la historia milenaria de los Andes."
+  },
+  {
+    "id": "6",
+    "nombre": "Silpancho",
+    "precioReferencial": 30,
+    "zona": "Miraflores",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Milanesa grande sobre arroz y papa con huevo y llajua.",
+    "picosidad": 3,
+    "descripcion": "Aunque originario de Cochabamba, el Silpancho se ha ganado un lugar especial en los corazones (y estómagos) de los paceños. Este plato monumental consiste en una milanesa de carne de res finamente apanada y frita hasta quedar dorada y crujiente, tan grande que cubre completamente el plato. Se sirve sobre una cama de arroz blanco esponjoso y papas fritas cortadas en rodajas delgadas. Corona el conjunto un huevo frito con la yema líquida que, al romperse, crea una salsa natural deliciosa. No puede faltar la ensalada fresca de tomate, cebolla y locoto en rodajas finas, ni la llajua picante que se unta generosamente sobre la carne. Es un plato abundante, ideal para compartir o para quienes tienen un apetito considerable después de caminar por las empinadas calles paceñas."
+  },
+  {
+    "id": "7",
+    "nombre": "Pique Macho",
+    "precioReferencial": 35,
+    "zona": "San Pedro",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Carne con salchicha, papas, huevo y ají.",
+    "picosidad": 4,
+    "descripcion": "El Pique Macho es el rey de los platos abundantes y picantes en La Paz. Este festín consiste en una montaña de papas fritas caseras crujientes por fuera y suaves por dentro, cubiertas con generosos trozos de carne de res salteada con cebolla, tomate y locoto. Salchichas de cerdo o de res cortadas en rodajas gruesas se distribuyen por todo el plato. Huevos duros en cuartos, tomate cherry, y chiles jalapeños encurtidos completan esta obra maestra culinaria. Todo se baña con una salsa levemente picante y se espolvorea con perejil fresco. El plato llega a la mesa humeante y se sirve en una fuente para compartir entre 2 o 3 personas, aunque los más valientes lo enfrentan solos. Es perfecto para acompañar con una cerveza bien fría. La versión 'macho' lleva extra de locoto y ají, solo para los verdaderos valientes."
+  },
+  {
+    "id": "8",
+    "nombre": "Sajta de Pollo",
+    "precioReferencial": 24,
+    "zona": "El Alto",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Pollo con ají amarillo, papa y tunta.",
+    "picosidad": 2,
+    "descripcion": "La Sajta de Pollo es un plato tradicional aymara que representa la fusión perfecta entre ingredientes andinos y técnicas culinarias coloniales. Trozos jugosos de pollo se cocinan en una salsa espesa y aromática de ají amarillo que le da ese color dorado característico y un picante moderado muy agradable. Las papas imilla cocidas absorben los sabores de la salsa, mientras que la tunta (chuño blanco) aporta esa textura única y ese sabor particular que solo este producto andino puede ofrecer. Cebolla finamente picada, ajo, comino y orégano completan el perfil de sabores. Se sirve con arroz blanco y a menudo se acompaña con chuño phuti adicional. La llajua nunca falta al costado. Este plato es especialmente popular durante las festividades y celebraciones familiares, y cada abuela paceña tiene su versión secreta que considera la mejor."
+  },
+  {
+    "id": "9",
+    "nombre": "Chicharrón de Cerdo",
+    "precioReferencial": 32,
+    "zona": "Sopocachi",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Cerdo frito crujiente con mote y llajua.",
+    "picosidad": 2,
+    "descripcion": "El Chicharrón paceño es una experiencia crujiente e irresistible. Grandes trozos de carne de cerdo con su cuero se fríen lentamente en su propia grasa hasta alcanzar esa textura perfecta: crujiente por fuera y jugosa por dentro. El secreto está en la cocción lenta que permite que la grasa se derrita completamente, dejando solo esa piel dorada y crocante. Se sirve con mote blanco gigante, papas cocidas enteras con piel, y chuño phuti. La llajua fresca es indispensable, y muchos lugares añaden una ensalada simple de cebolla, tomate y locoto. Los domingos, las chicherías de La Paz se llenan de familias enteras que vienen a disfrutar este manjar acompañado de chicha de maíz. Es tradición comerlo con las manos, dejando que los dedos se impregnen de ese sabor intenso."
+  },
+  {
+    "id": "10",
+    "nombre": "Rostro Asado",
+    "precioReferencial": 45,
+    "zona": "Miraflores",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Carne asada selecta con papas y ensalada.",
+    "picosidad": 1,
+    "descripcion": "El Rostro Asado es considerado uno de los cortes más selectos y sabrosos de la gastronomía paceña. Esta pieza de carne se marina durante horas en una mezcla secreta de especias, ajo, comino, cerveza negra y ají colorado, lo que le otorga un sabor profundo e incomparable. Luego se asa lentamente a la parrilla o al horno hasta que alcanza ese punto perfecto donde la superficie está caramelizada y crujiente mientras el interior permanece rosado y jugoso. Se sirve en medallones gruesos acompañados de papas nativas asadas o fritas, una ensalada fresca mixta, y a veces un chimichurri paceño preparado con perejil, orégano, ajo y vinagre. La llajua, por supuesto, nunca falta. Este plato es ideal para ocasiones especiales y cenas importantes, siendo uno de los favoritos para celebrar cumpleaños y aniversarios."
+  },
+  {
+    "id": "11",
+    "nombre": "Thimpu de Cordero",
+    "precioReferencial": 26,
+    "zona": "El Alto",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Guiso de cordero con verduras y ají.",
+    "picosidad": 3,
+    "descripcion": "El Thimpu es un guiso tradicional altiplánico que ha alimentado a generaciones de familias aymaras. Este plato reconfortante lleva trozos tiernos de cordero cocidos lentamente hasta que la carne se deshace en la boca. Las papas, zanahorias, arvejas y habas se cocinan en el mismo caldo aromático preparado con ají colorado, cebolla, ajo y especias. El chuño negro también hace su aparición, aportando esa textura única y absorbiendo todos los sabores del guiso. A menudo se agregan fideos o arroz para hacerlo aún más sustancioso. El caldo resultante es espeso, ligeramente picante y profundamente sabroso. Se sirve bien caliente en platos hondos, decorado con perejil fresco y acompañado siempre de llajua extra para quienes gustan del picante intenso. Es el plato perfecto para los almuerzos dominicales en familia."
+  },
+  {
+    "id": "12",
+    "nombre": "Lechón al Horno",
+    "precioReferencial": 38,
+    "zona": "San Pedro",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Cerdo horneado con piel crocante.",
+    "picosidad": 1,
+    "descripcion": "El Lechón al Horno es una especialidad que requiere paciencia y maestría culinaria. Un lechón joven se marina durante toda la noche con una mezcla de cerveza negra, ajo machacado, comino, orégano, sal y pimienta. Al día siguiente, se hornea lentamente durante varias horas, rociándolo constantemente con su propia grasa y la marinada, hasta que la piel queda increíblemente crujiente y dorada, mientras la carne permanece tierna y jugosa. Se sirve en porciones generosas acompañadas de papas doradas al horno, mote blanco, sarza criolla (cebolla, tomate y locoto finamente picados con vinagre), y por supuesto, llajua. Algunos restaurantes incluyen también chuño phuti y una ensalada fresca. Este plato es estrella en celebraciones, fiestas patronales y eventos especiales, donde el lechón entero se presenta en la mesa antes de ser cortado."
+  },
+  {
+    "id": "13",
+    "nombre": "Charquekan",
+    "precioReferencial": 29,
+    "zona": "Sopocachi",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Charque frito con huevo, papa y queso.",
+    "picosidad": 2,
+    "descripcion": "El Charquekan es un plato que honra la tradición andina de conservar la carne mediante el secado al sol. El charque (carne de llama o res deshidratada y salada) se remoja durante horas para quitarle el exceso de sal, luego se cocina hasta ablandarse y finalmente se fríe hasta quedar crujiente y dorado. Se desmenuza sobre un plato caliente y se acompaña con papas amarillas cocidas y luego fritas, mote blanco, queso humacha frito, huevos fritos con la yema líquida, y una llajua bien picante. El conjunto crea una sinfonía de texturas y sabores: lo crujiente del charque y las papas, lo cremoso del huevo y el queso, y el toque explosivo de la llajua. Es un plato extremadamente popular para los desayunos tardíos de fin de semana, especialmente después de una noche de fiesta, pues se dice que tiene propiedades revitalizantes."
+  },
+  {
+    "id": "14",
+    "nombre": "Picante de Pollo",
+    "precioReferencial": 23,
+    "zona": "Miraflores",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Pollo en salsa de ají con papa.",
+    "picosidad": 4,
+    "descripcion": "El Picante de Pollo es para los verdaderos amantes del chile. Este plato lleva presas de pollo cocidas en una salsa espesa y muy picante preparada con una combinación de ají colorado, ají amarillo y locoto fresco, todo molido con cebolla, ajo, comino y orégano. Las papas amarillas se cocinan en la misma salsa, absorbiendo todo ese sabor intenso y ese picante que hace sudar hasta al más valiente. Se sirve con arroz blanco para ayudar a contrarrestar el picante, y una porción extra de llajua para quienes deseen intensificar aún más la experiencia. Arvejas y zanahoria a veces se añaden al guiso. Este plato no es para principiantes en el mundo del picante boliviano, pero para quienes lo dominan, es una experiencia culinaria adictiva que los hace volver una y otra vez."
+  },
+  {
+    "id": "15",
+    "nombre": "Reviro Paceño",
+    "precioReferencial": 15,
+    "zona": "El Alto",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Masa de maíz frita con queso.",
+    "picosidad": 0,
+    "descripcion": "El Reviro es un plato humilde pero extraordinariamente sabroso que nació en las cocinas campesinas del altiplano. Se prepara con una masa de harina de maíz amarillo (o a veces harina de trigo) que se amasa con agua y sal hasta formar una consistencia suave. Esta masa se corta en porciones y se fríe en abundante aceite hasta que queda dorada y crujiente por fuera. Tradicionalmente se sirve con queso fresco rallado espolvoreado encima, el cual se derrite ligeramente con el calor del reviro. Algunas versiones incluyen charque desmenuzado dentro de la masa o como acompañamiento. El resultado es un bocado crujiente, reconfortante y lleno de sabor simple pero auténtico. Es especialmente popular como desayuno o merienda, acompañado de té de coca o mate de anís caliente. Su bajo costo y alto poder de saciedad lo han convertido en un favorito entre estudiantes y trabajadores."
+  },
+  {
+    "id": "16",
+    "nombre": "Papas Rellenas",
+    "precioReferencial": 4,
+    "zona": "San Pedro",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Papa rellena de carne frita crujiente.",
+    "picosidad": 1,
+    "descripcion": "Las Papas Rellenas son un snack callejero icónico que se encuentra en cada esquina de La Paz. Estos bocados deliciosos consisten en una masa de papa amarilla cocida y molida, sazonada con sal y pimienta, que se rellena con un picadillo jugoso de carne de res molida salteada con cebolla, ajo, arvejas, zanahoria, pasas, huevo duro picado y aceitunas. A veces se añade un toque de ají para darle un poco de chispa. La papa rellena se forma en una croqueta ovalada, se pasa por huevo batido y se cubre con pan rallado antes de freírse en aceite caliente hasta alcanzar un dorado perfecto. El exterior queda crujiente mientras el interior permanece suave y jugoso. Se sirven con llajua para mojar y son perfectas como entrada, snack o incluso como plato principal si se piden varias. Son especialmente populares para llevar y comer mientras caminas por las calles del centro."
+  },
+  {
+    "id": "17",
+    "nombre": "Anticuchos",
+    "precioReferencial": 3,
+    "zona": "Sopocachi",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Brochetas de corazón marinado a la parrilla.",
+    "picosidad": 2,
+    "descripcion": "Los Anticuchos son quizás el street food más emblemático de La Paz. Estas brochetas se preparan con corazón de res cortado en cubos uniformes y marinado durante horas (o incluso días) en una mezcla secreta de ají panca, comino, ajo molido, vinagre, cerveza negra y especias. El corazón absorbe todos estos sabores intensos. Luego se ensartan en palitos de madera junto con trozos de papa amarilla y se asan a la parrilla sobre carbón ardiente, lo que les da ese sabor ahumado inigualable. Mientras se cocinan, se bañan constantemente con más marinada. El resultado es una carne tierna, jugosa, ligeramente picante y profundamente sabrosa. Se sirven con una papa extra, llajua picante y a veces una salsa de maní. Las anticucheras de La Paz son instituciones locales, y cada una tiene su clientela fiel que jura que los suyos son los mejores de la ciudad."
+  },
+  {
+    "id": "18",
+    "nombre": "Sonso de Yuca",
+    "precioReferencial": 12,
+    "zona": "Miraflores",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Masa de yuca con queso al horno.",
+    "picosidad": 0,
+    "descripcion": "El Sonso de Yuca es una delicia que llegó desde las tierras bajas de Bolivia pero se ha ganado su lugar en las mesas paceñas. Se prepara con yuca cocida y molida hasta formar una masa suave y elástica, que se mezcla con mantequilla, queso fresco rallado, huevos y un toque de azúcar. Esta mezcla se coloca en un molde enmantequillado y se hornea hasta que la superficie queda dorada y ligeramente crujiente, mientras el interior permanece húmedo y cremoso con bolsitas de queso derretido. El resultado es un pan-pastel ligeramente dulce, sumamente reconfortante y con una textura única que no se parece a nada más. Se sirve tibio, cortado en porciones generosas, y es perfecto para acompañar un café con leche o un té de canela en las tardes frías. Muchas panaderías paceñas lo preparan diariamente y se agota rápidamente."
+  },
+  {
+    "id": "19",
+    "nombre": "Salteñas",
+    "precioReferencial": 5,
+    "zona": "El Alto",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Empanada jugosa horneada de carne.",
+    "picosidad": 1,
+    "descripcion": "La Salteña es el desayuno por excelencia de todos los bolivianos y las de La Paz tienen una reputación especial. Estas empanadas horneadas tienen una masa ligeramente dulce, tierna y con ese color amarillo dorado característico. El relleno es donde ocurre la magia: un guiso jugoso de carne de res (o pollo) picada cocida con cebolla, arvejas, zanahoria, papa en cubitos pequeños, huevo duro, aceitunas y pasas, todo en un caldo espeso y gelatinoso sazonado con comino, orégano y un toque de ají que le da un picor suave. La técnica para comer una salteña es todo un arte: se muerde la esquina superior, se sorbe el caldo caliente sin quemarse, y luego se va comiendo de a poco, siempre con cuidado de que no se derrame. Se acompañan con llajua y son el acompañamiento perfecto para un api morado o un té caliente en las mañanas."
+  },
+  {
+    "id": "20",
+    "nombre": "Tucumanas",
+    "precioReferencial": 4,
+    "zona": "San Pedro",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Empanada frita picante de carne.",
+    "picosidad": 3,
+    "descripcion": "Las Tucumanas son las primas picantes y fritas de las salteñas. Estas empanadas tienen una masa más firme que se fríe hasta quedar dorada y crujiente. El relleno es similar al de las salteñas pero mucho más picante, con generosas cantidades de ají colorado y locoto molido que le dan ese kick característico. La carne molida se mezcla con papa, arvejas, huevo duro picado y a veces un toque de pasas para contrastar el picante con dulzor. A diferencia de las salteñas, las tucumanas tienen menos caldo y un relleno más compacto, lo que las hace perfectas para comer en cualquier momento sin temor a mancharse. Son especialmente populares como snack de media tarde o para acompañar un vaso de refresco helado. Cada tucumana es una explosión de sabores: crujiente, picante, jugosa y absolutamente adictiva. La llajua extra es obligatoria para los verdaderos fanáticos del picante."
+  },
+  {
+    "id": "21",
+    "nombre": "Ranga Ranga",
+    "precioReferencial": 21,
+    "zona": "Sopocachi",
+    "picUri": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1",
+    "descripcionCorta": "Mondongo en salsa picante espesa.",
+    "picosidad": 4,
+    "descripcion": "El Ranga Ranga es un plato para paladares aventureros y amantes de los sabores intensos. Este guiso tiene como protagonista el mondongo (estómago de res o de cordero) cortado en tiras largas y cocido durante horas hasta que queda tierno pero aún con textura. Se prepara en una salsa espesa y muy picante hecha con ají colorado, ají amarillo, locoto, cebolla, ajo, comino y orégano. Las papas amarillas y el mote blanco se cocinan en esta misma salsa explosiva, absorbiendo todos los sabores. El chuño negro también hace su aparición, añadiendo esa característica textura andina. El plato se sirve humeante, decorado con perejil fresco picado, y siempre con llajua extra al costado. Es importante comerlo bien caliente, ya que así los sabores se aprecian mejor. Tradicionalmente se consume en celebraciones y fiestas, y se dice que es un excelente remedio para curar la resaca."
+  }
 ]
