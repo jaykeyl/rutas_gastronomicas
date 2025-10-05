@@ -1,7 +1,10 @@
-import { useThemeStore } from '../store/useThemeStore';
-import { palette } from '../theme/colors';
+import { palette, ThemeName } from "../theme/tokens";
+import { useState } from "react";
+
+let current: ThemeName = "light";
+export const setTheme = (t: ThemeName) => { current = t; };
 
 export const useThemeColors = () => {
-  const theme = useThemeStore((state) => state.theme);
-  return { theme, colors: palette[theme] };
+  useState(current); 
+  return { colors: palette[current] };
 };

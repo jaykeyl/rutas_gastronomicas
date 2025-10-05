@@ -1,9 +1,7 @@
-import { Stack } from 'expo-router';
+import { Redirect } from "expo-router";
 
-export default function RootLayout() {
+export default function Index() { 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <Redirect href="/(drawer)/(tabs)" />
   );
 }

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useThemeColors } from "../../../hooks/useThemeColors";
-import { spacing, radius } from "../../../theme/tokens";
+import { useThemeColors } from "../../hooks/useThemeColors";
+import { spacing, radius } from "../../theme/tokens";
 
 export default function PerfilDrawer() {
   const { colors } = useThemeColors();
@@ -9,8 +9,8 @@ export default function PerfilDrawer() {
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border,
         shadowColor: colors.shadow }]}>
         <View style={styles.avatar} />
-        <Text style={[styles.title, { color: colors.text }]}>Configura tu cuentaaaaaaa</Text>
-        <Text style={{ color: colors.muted, marginTop: spacing.sm }}>iiwiweiwiwe</Text>
+        <Text style={[styles.title, { color: colors.text }]}>configura tu cuentaaaaa</Text>
+        <Text style={{ color: colors.muted, marginTop: spacing.sm }}>son diferentes perfiles pipipi</Text>
       </View>
     </View>
   );

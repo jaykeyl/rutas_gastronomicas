@@ -1,62 +1,25 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useThemeColors } from '../hooks/useThemeColors';
+import { Drawer } from "expo-router/drawer";
+import { useThemeColors } from "../hooks/useThemeColors";
 
-export default function TabsLayout() {
+export default function DrawerLayout() {
   const { colors } = useThemeColors();
 
   return (
-    <Tabs
+    <Drawer
       screenOptions={{
-        headerTitleAlign: 'center',
-        headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.text,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.muted,
-        tabBarStyle: { backgroundColor: colors.surface },
+        headerShown: false,
+        drawerActiveTintColor: colors.primary,
+        drawerStyle: { backgroundColor: colors.background },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Inicio',
-          tabBarLabel: 'Inicio',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
+      <Drawer.Screen
+        name="(tabs)"
+        options={{ title: "Inicio", drawerLabel: "Inicio" }}
       />
-      <Tabs.Screen
-        name="platos"
-        options={{
-          title: 'Platos',
-          tabBarLabel: 'Platos',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="restaurant-outline" size={size} color={color} />
-          ),
-        }}
+      <Drawer.Screen
+        name="perfil/index"         
+        options={{ title: "Perfil", drawerLabel: "Perfil" }}
       />
-      <Tabs.Screen
-        name="favoritos"
-        options={{
-          title: 'Favoritos',
-          tabBarLabel: 'Favoritos',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="heart-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="perfil"
-        options={{
-          title: 'Perfil',
-          tabBarLabel: 'Perfil',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-circle-outline" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+    </Drawer>
   );
 }

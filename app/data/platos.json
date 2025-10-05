@@ -1,1 +1,10 @@
-﻿[]
+﻿[
+  { "id":"1","nombre":"Plato Paceño Tradicional","precioReferencial":25,"zona":"Sopocachi","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Filete a la plancha con queso frito, choclo, habas y papa andina.","picosidad":1 },
+  { "id":"2","nombre":"Fricase","precioReferencial":28,"zona":"Miraflores","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Cerdo en caldo espeso con ají amarillo, mote y pan.","picosidad":3 },
+  { "id":"3","nombre":"Ají de Fideos","precioReferencial":22,"zona":"San Pedro","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Fideos guisados con ají y carne.","picosidad":4 },
+  { "id":"4","nombre":"Sopa de Maní","precioReferencial":18,"zona":"El Alto","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Cremosa con maní, papa, zanahoria y carne.","picosidad":0 },
+  { "id":"5","nombre":"Chairo Paceño","precioReferencial":20,"zona":"Sopocachi","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Sopa de chuño, carne y verduras; sabor andino clásico.","picosidad":1 },
+  { "id":"6","nombre":"Silpancho","precioReferencial":30,"zona":"Miraflores","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Milanesa grande sobre arroz y papa con huevo y llajua.","picosidad":3 },
+  { "id":"7","nombre":"Pique Macho","precioReferencial":35,"zona":"San Pedro","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Carne con salchicha, papas, huevo y ají.","picosidad":4 },
+  { "id":"8","nombre":"Sajta de Pollo","precioReferencial":24,"zona":"El Alto","picUri":"https://images.unsplash.com/photo-1555939594-58d7cb561ad1","descripcionCorta":"Pollo con ají amarillo, papa y tunta.","picosidad":2 }
+]
