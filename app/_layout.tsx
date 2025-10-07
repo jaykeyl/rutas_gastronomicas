@@ -7,9 +7,10 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="auto" />
-      <Stack screenOptions={{ headerStyle:{ backgroundColor: colors.surface }, headerTintColor: colors.text }}>
-        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-        <Stack.Screen name="explorar" options={{ title: "Explorar" }} />
+      <Stack screenOptions={{ headerStyle: { backgroundColor: colors.surface }, headerTintColor: colors.text, headerShown: false, }}>
+        <Stack.Screen name="auth" />
+        <Stack.Screen name="(drawer)" />
+        <Stack.Screen name="explorar" options={{ headerShown: true, title: "Explorar" }} />
       </Stack>
     </>
   );
