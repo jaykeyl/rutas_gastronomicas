@@ -4,7 +4,7 @@ import { useThemeColors } from "../../hooks/useThemeColors";
 import { useCurrency } from "../../hooks/useCurrency";
 import { useDailyDishes } from "../../hooks/useDailyDishes";
 import { useCatalogStore } from "../../store/catalog";
-import data from "../../data/platos.json";
+import { platos as data } from "../../data/platos";
 import { spacing, radius } from "../../theme/tokens";
 import type { Dish } from "../../components/DishCard";
 
@@ -13,7 +13,7 @@ export default function Home() {
   const { format } = useCurrency();
 
   const platosStore = useCatalogStore((s) => s.platos);
-  const all: Dish[] = (platosStore.length ? platosStore : (data as Dish[]));
+  const all: Dish[] = platosStore.length ? platosStore : data;
   const delDia = useDailyDishes(all, 10);
 
   return (
@@ -72,7 +72,7 @@ export default function Home() {
                   { backgroundColor: colors.surface, borderColor: colors.border, shadowColor: colors.shadow },
                 ]}
               >
-                <Image source={{ uri: item.picUri }} style={styles.miniImage} />
+                <Image source={item.picUri} style={styles.miniImage} />
                 <Text numberOfLines={1} style={[styles.miniName, { color: colors.text }]}>{item.nombre}</Text>
                 <Text style={[styles.miniPrice, { color: colors.muted }]}>{format(item.precioReferencial)}</Text>
               </View>
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
   },
 
-  /* tus estilos de botones */
   actionsColumn: { width: "92%", alignSelf: "center", marginTop: 16 },
   btnFilled: {
     minHeight: 52,
