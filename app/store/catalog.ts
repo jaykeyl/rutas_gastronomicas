@@ -1,3 +1,4 @@
+import { ImageSourcePropType } from "react-native";
 import { create } from "zustand";
 
 export type Plato = {
@@ -5,7 +6,7 @@ export type Plato = {
   nombre: string;
   precioReferencial: number;
   zona: string;
-  picUri: string;
+  picUri: ImageSourcePropType;
   descripcionCorta: string;
   picosidad: number; // 0–5
 };

@@ -3,9 +3,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { spacing, radius } from "../../../theme/tokens";
-import data from "../../../data/platos.json";
-import type { Dish } from "../../../components/DishCard";
-import { useCatalogStore } from "../../../store/catalog";
+import { platos as data } from "../../../data/platos";
+import { useCatalogStore, type Plato } from "../../../store/catalog";
 import { useCurrency } from "../../../hooks/useCurrency";
 
 export default function PlatoDetail() {
@@ -17,7 +16,7 @@ export default function PlatoDetail() {
   const fav = useCatalogStore((s) => (id ? s.favoritos.has(id) : false));
   const toggleFavorito = useCatalogStore((s) => s.toggleFavorito);
 
-  const all = platos.length ? platos : (data as Dish[]);
+  const all: Plato[] = platos.length ? platos : data;
   const plato = all.find((p) => p.id === id);
 
   if (!plato) {
@@ -34,7 +33,7 @@ export default function PlatoDetail() {
       contentContainerStyle={{ padding: spacing.lg }}
     >
       <Image
-        source={{ uri: plato.picUri }}
+        source={plato.picUri}
         style={{ height: 220, borderRadius: radius.lg, marginBottom: spacing.md }}
       />
 
@@ -52,9 +51,7 @@ export default function PlatoDetail() {
           elevation: 8,
         }}
       >
-        <View
-          style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
-        >
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={{ fontSize: 18, fontWeight: "800", color: colors.text }}>
             {plato.nombre}
           </Text>
