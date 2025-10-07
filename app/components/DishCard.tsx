@@ -23,7 +23,7 @@ export default function DishCard({ item }: { item: Dish }) {
     >
       <Link href={`/(drawer)/(tabs)/platos/${item.id}`} asChild>
         <Pressable style={{ flexDirection: "row", gap: spacing.md, flex: 1 }}>
-          <Image source={item.picUri} style={styles.img} />
+          <Image source={item.picUri} style={styles.img} resizeMode="cover" />
           <View style={{ flex: 1, gap: 2 }}>
             <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
               {item.nombre}

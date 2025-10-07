@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
+import {Image, ScrollView, Text, View, TouchableOpacity, StyleSheet, Dimensions, } from "react-native";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { spacing, radius } from "../../../theme/tokens";
 import { platos as data } from "../../../data/platos";
@@ -27,15 +27,39 @@ export default function PlatoDetail() {
     );
   }
 
+  const imageSource =
+    typeof plato.picUri === "string" ? { uri: plato.picUri } : plato.picUri;
+
   return (
     <ScrollView
       style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: spacing.lg }}
+      contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xl }}
     >
-      <Image
-        source={plato.picUri}
-        style={{ height: 220, borderRadius: radius.lg, marginBottom: spacing.md }}
-      />
+      <View
+        style={[
+          styles.heroWrap,
+          {
+            borderRadius: radius.lg,
+            backgroundColor: colors.surface,
+            shadowColor: colors.shadow,
+          },
+        ]}
+      >
+        <Image source={imageSource} style={styles.hero} resizeMode="cover" />
+        <TouchableOpacity
+          onPress={() => toggleFavorito(plato.id)}
+          style={[styles.favBtn, { backgroundColor: colors.background }]}
+          hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
+          accessibilityRole="button"
+          accessibilityLabel={fav ? "Quitar de favoritos" : "Agregar a favoritos"}
+        >
+          <Ionicons
+            name={fav ? "heart" : "heart-outline"}
+            size={20}
+            color={fav ? "#e11d48" : colors.muted}
+          />
+        </TouchableOpacity>
+      </View>
 
       <View
         style={{
@@ -51,13 +75,15 @@ export default function PlatoDetail() {
           elevation: 8,
         }}
       >
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <View
+          style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
+        >
           <Text style={{ fontSize: 18, fontWeight: "800", color: colors.text }}>
             {plato.nombre}
           </Text>
 
           <TouchableOpacity
-            onPress={() => id && toggleFavorito(id)}
+            onPress={() => toggleFavorito(plato.id)}
             hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
             accessibilityRole="button"
             accessibilityLabel={fav ? "Quitar de favoritos" : "Agregar a favoritos"}
@@ -83,3 +109,22 @@ export default function PlatoDetail() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  heroWrap: {
+    overflow: "hidden", 
+    marginBottom: spacing.md,
+  },
+  hero: {
+    width: "100%",
+    height: undefined,
+    aspectRatio: 16 / 9, 
+  },
+  favBtn: {
+    position: "absolute",
+    right: spacing.md,
+    top: spacing.md,
+    padding: spacing.sm,
+    borderRadius: 999,
+  },
+});
