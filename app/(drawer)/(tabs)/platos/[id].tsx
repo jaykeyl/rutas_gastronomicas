@@ -1,11 +1,21 @@
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import {Image, ScrollView, Text, View, TouchableOpacity, StyleSheet, Dimensions, } from "react-native";
+import {
+  Image,
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { useThemeColors } from "../../../hooks/useThemeColors";
 import { spacing, radius } from "../../../theme/tokens";
 import { platos as data } from "../../../data/platos";
 import { useCatalogStore, type Plato } from "../../../store/catalog";
 import { useCurrency } from "../../../hooks/useCurrency";
+import { openInGoogleMapsQuery } from "../../../utils/openMaps";
+import { formatPicosidad } from "../../../utils/picosidad";
 
 export default function PlatoDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -101,10 +111,36 @@ export default function PlatoDetail() {
         </Text>
 
         <Text style={{ color: colors.muted, marginBottom: spacing.md }}>
-          🌶️ Picosidad: {plato.picosidad <= 1 ? "Baja" : plato.picosidad <= 3 ? "Media" : "Alta"}
+          {formatPicosidad(plato.picosidad)}
         </Text>
 
+
         <Text style={{ color: colors.text }}>{plato.descripcionCorta}</Text>
+
+        <View style={{ marginTop: spacing.md }}>
+          <TouchableOpacity
+            onPress={() =>
+              openInGoogleMapsQuery(`${plato.nombre} ${plato.zona} La Paz Bolivia`)
+            }
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              alignSelf: "flex-start",
+              paddingHorizontal: spacing.lg,
+              paddingVertical: spacing.sm,
+              borderRadius: radius.lg,
+              borderWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: colors.surface,
+            }}
+            accessibilityRole="button"
+            accessibilityLabel="Ver en mapa"
+          >
+            <Ionicons name="map-outline" size={18} color={colors.text} />
+            <Text style={{ color: colors.text, fontWeight: "600" }}>Ver en mapa</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -112,13 +148,13 @@ export default function PlatoDetail() {
 
 const styles = StyleSheet.create({
   heroWrap: {
-    overflow: "hidden", 
+    overflow: "hidden",
     marginBottom: spacing.md,
   },
   hero: {
     width: "100%",
     height: undefined,
-    aspectRatio: 16 / 9, 
+    aspectRatio: 16 / 9,
   },
   favBtn: {
     position: "absolute",

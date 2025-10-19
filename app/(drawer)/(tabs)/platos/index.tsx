@@ -7,6 +7,7 @@ import ZonaFilter from "../../../components/ZonaFilter";
 import DishCard from "../../../components/DishCard";
 import { platos as data } from "../../../data/platos";
 import { useCatalogStore, type Plato } from "../../../store/catalog";
+import PicosidadRange from "../../../components/PicosidadRange";
 
 const ZONAS = ["Todos","Miraflores","Sopocachi","El Alto","San Pedro"] as const;
 
@@ -14,6 +15,7 @@ export default function PlatosList() {
   const { colors } = useThemeColors();
   const [query, setQuery] = useState("");
   const [zona, setZona] = useState<(typeof ZONAS)[number]>("Todos");
+  const [picRange, setPicRange] = useState({ min: 0, max: 5 });
 
   const platos = useCatalogStore(s => s.platos);
   const setPlatos = useCatalogStore(s => s.setPlatos);
@@ -26,8 +28,9 @@ export default function PlatosList() {
     () =>
       platos
         .filter((p) => p.nombre.toLowerCase().includes(query.toLowerCase()))
-        .filter((p) => (zona === "Todos" ? true : p.zona === zona)),
-    [platos, query, zona]
+        .filter((p) => (zona === "Todos" ? true : p.zona === zona))
+        .filter((p) => p.picosidad >= picRange.min && p.picosidad <= picRange.max),
+    [platos, query, zona, picRange]
   );
 
   return (
@@ -36,6 +39,7 @@ export default function PlatosList() {
         <SearchBar value={query} onChange={setQuery} />
         <Text style={{ color: colors.muted, marginTop: 4 }}>Zonas</Text>
         <ZonaFilter zonas={[...ZONAS]} value={zona} onChange={setZona} />
+        <PicosidadRange value={picRange} onChange={setPicRange} />
       </View>
       <FlatList
         contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl }}

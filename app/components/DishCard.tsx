@@ -5,6 +5,7 @@ import { useThemeColors } from "../hooks/useThemeColors";
 import { useCurrency } from "../hooks/useCurrency";
 import { spacing, radius } from "../theme/tokens";
 import { useCatalogStore, type Plato } from "../store/catalog";
+import { formatPicosidad } from "../utils/picosidad";
 
 export type Dish = Plato;
 
@@ -29,8 +30,9 @@ export default function DishCard({ item }: { item: Dish }) {
               {item.nombre}
             </Text>
             <Text style={{ color: colors.muted }}>
-              🌶️ Picosidad: {item.picosidad <= 1 ? "Baja" : item.picosidad <= 3 ? "Media" : "Alta"}
+              {formatPicosidad(item.picosidad)}
             </Text>
+
           </View>
         </Pressable>
       </Link>
