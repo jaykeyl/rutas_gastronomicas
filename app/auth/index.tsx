@@ -1,107 +1,135 @@
 import { router } from "expo-router";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useThemeColors } from "../hooks/useThemeColors";
-import { spacing, radius } from "../theme/tokens";
+import { useThemeColors } from "../../hooks/useThemeColors";
+import { spacing, radius } from "../../theme/tokens";
+import { useState } from "react";
+import { signInEmail, resetPassword, useGoogleAuth } from "../../services/auth";
 
-export default function AuthScreen() {
-    const { colors } = useThemeColors();
+export default function LoginScreen() {
+  const { colors } = useThemeColors();
 
-    const goIn = () => {
-        router.replace("/(drawer)/(tabs)");
-    };
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-    return (
+  const { request, promptAsync } = useGoogleAuth(() => {
+    router.replace("/(drawer)/(tabs)");
+  });
+
+  const onLogin = async () => {
+    setErr(null);
+    setInfo(null);
+    if (!email || !pass) { setErr("Ingresa email y contraseña."); return; }
+    try {
+      setLoading(true);
+      await signInEmail(email.trim(), pass);
+      router.replace("/(drawer)/(tabs)");
+    } catch (e: any) {
+      const msg = e?.message?.toString?.() ?? "Error al iniciar sesión.";
+      setErr(msg.includes("auth/invalid-credential") ? "Credenciales inválidas." : msg);
+    } finally { setLoading(false); }
+  };
+
+  const onForgot = async () => {
+    setErr(null);
+    setInfo(null);
+    if (!email) { setErr("Escribe tu email para enviarte el enlace."); return; }
+    try {
+      await resetPassword(email.trim());
+      setInfo("Te enviamos un enlace para restablecer tu contraseña.");
+    } catch {
+      setErr("No pudimos enviar el correo. Revisa el email ingresado.");
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <View style={styles.logoWrap}>
-                <View style={[styles.logoCard, { backgroundColor: colors.surface, shadowColor: colors.text }]}>
-                    <Text style={[styles.emoji, { color: colors.primary }]}>🍽️</Text>
-                </View>
-                <Text style={[styles.title, { color: colors.text }]}>Rutas Gastronómicas</Text>
-                <Text style={[styles.subtitle, { color: colors.subtitle }]}>
-                    Explora platos de La Paz.
-                </Text>
+          <View style={styles.logoWrap}>
+            <View style={[styles.logoCard, { backgroundColor: colors.surface, shadowColor: colors.text }]}>
+              <Text style={[styles.emoji, { color: colors.primary }]}>🍽️</Text>
+            </View>
+            <Text style={[styles.title, { color: colors.text }]}>Rutas Gastronómicas</Text>
+            <Text style={[styles.subtitle, { color: colors.subtitle }]}>Explora platos de La Paz.</Text>
+          </View>
+
+          <View style={styles.form}>
+            {err ? <Text style={{ color: "#d00", marginBottom: spacing.xs }}>{err}</Text> : null}
+            {info ? <Text style={{ color: "#0a7", marginBottom: spacing.xs }}>{info}</Text> : null}
+
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor={colors.muted}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+              style={[styles.input, { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border }]}
+              returnKeyType="next"
+            />
+
+            <View style={[styles.input, { backgroundColor: colors.surface, borderColor: colors.border, flexDirection:"row", alignItems:"center" }]}>
+              <TextInput
+                placeholder="Contraseña"
+                placeholderTextColor={colors.muted}
+                secureTextEntry={!showPass}
+                value={pass}
+                onChangeText={setPass}
+                style={{ flex:1, color: colors.text }}
+                returnKeyType="done"
+                onSubmitEditing={onLogin}
+              />
+              <TouchableOpacity onPress={() => setShowPass(s => !s)} hitSlop={10}>
+                <Ionicons name={showPass ? "eye-off-outline" : "eye-outline"} size={20} color={colors.muted} />
+              </TouchableOpacity>
             </View>
 
-            <View style={styles.ctaWrap}>
-                <TouchableOpacity
-                    onPress={goIn}
-                    activeOpacity={0.9}
-                    style={[styles.button, { backgroundColor: colors.primary, shadowColor: colors.text }]}
-                >
-                    <Ionicons name="log-in-outline" size={22} color="#fff" />
-                    <Text style={styles.buttonText}>Entra a la aplicación </Text>
-                </TouchableOpacity>
+            <TouchableOpacity onPress={onLogin} activeOpacity={0.9}
+              style={[styles.button, { backgroundColor: colors.primary, shadowColor: colors.text, opacity: loading ? 0.7 : 1 }]}>
+              <Ionicons name="log-in-outline" size={22} color="#fff" />
+              <Text style={styles.buttonText}>{loading ? "Ingresando..." : "Iniciar sesión"}</Text>
+            </TouchableOpacity>
 
-                <Text style={[styles.disclaimer, { color: colors.muted }]}>
-                    No credentials por ahora, solo es una prueba.
-                </Text>
+            <View style={{ flexDirection:"row", justifyContent:"center", gap:16, marginTop: spacing.xs }}>
+              <TouchableOpacity onPress={onForgot}>
+                <Text style={{ color: colors.primary, fontWeight:"700" }}>¿Olvidaste tu contraseña?</Text>
+              </TouchableOpacity>
+              <Text style={{ color: colors.muted }}>·</Text>
+              <TouchableOpacity onPress={() => router.push("/auth/register")}>
+                <Text style={{ color: colors.primary, fontWeight:"700" }}>Crear cuenta</Text>
+              </TouchableOpacity>
             </View>
+
+            <TouchableOpacity onPress={() => promptAsync()} disabled={!request} style={[styles.btnOutline, { borderColor: colors.primary }]}>
+              <Ionicons name="logo-google" size={18} color={colors.primary} />
+              <Text style={[styles.btnOutlineText, { color: colors.primary }]}>Continuar con Google</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-    );
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: spacing.xl,
-        paddingTop: spacing.xl * 2,
-        paddingBottom: spacing.xl,
-        justifyContent: "space-between",
-    },
-    logoWrap: {
-        alignItems: "center",
-        gap: spacing.md,
-        marginTop: spacing.xl,
-    },
-    logoCard: {
-        width: 120,
-        height: 120,
-        borderRadius: radius.xl,
-        alignItems: "center",
-        justifyContent: "center",
-        shadowOpacity: 0.1,
-        shadowRadius: 20,
-        shadowOffset: { width: 0, height: 10 },
-        elevation: 8,
-    },
-    emoji: {
-        fontSize: 60,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: "700",
-        letterSpacing: 0.5,
-    },
-    subtitle: {
-        fontSize: 14,
-        textAlign: "center",
-        maxWidth: 320,
-        lineHeight: 20,
-    },
-    ctaWrap: {
-        gap: spacing.md,
-    },
-    button: {
-        height: 56,
-        borderRadius: radius.lg,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: spacing.sm,
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-        shadowOffset: { width: 0, height: 6 },
-        elevation: 6,
-    },
-    buttonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "700",
-        letterSpacing: 0.4,
-    },
-    disclaimer: {
-        fontSize: 12,
-        textAlign: "center",
-    },
+  container:{ flex:1, padding: spacing.md, justifyContent:'center' },
+  logoWrap:{ alignItems:"center", marginBottom: spacing.lg },
+  logoCard:{ width:120, height:120, borderRadius: radius.xl, alignItems:"center", justifyContent:"center",
+    shadowOpacity:0.1, shadowRadius:20, shadowOffset:{ width:0, height:10 }, elevation:8 },
+  emoji:{ fontSize:60 },
+  title:{ fontSize:22, fontWeight:"800", marginTop: spacing.sm },
+  subtitle:{ marginTop: spacing.xs },
+  form:{ gap: spacing.sm, paddingBottom: spacing.xl },
+  input:{ borderRadius: radius.md, padding: spacing.md, borderWidth:1 },
+  button:{ borderRadius: radius.md, padding: spacing.md, alignItems:"center", flexDirection:"row",
+    gap:8, justifyContent:"center" },
+  buttonText:{ color:"#fff", fontWeight:"700" },
+  btnOutline:{ borderWidth:1, borderRadius: radius.md, paddingVertical: spacing.md, alignItems:'center',
+    flexDirection:'row', gap:8, justifyContent:'center', marginTop: spacing.md },
+  btnOutlineText:{ fontWeight:'700' }
 });

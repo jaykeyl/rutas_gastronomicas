@@ -1,10 +1,10 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { StyleSheet, Switch, Text, View } from 'react-native';
-import { useThemeColors } from '../../hooks/useThemeColors';
-import { useThemeStore } from '../../store/useThemeStore';
-import type { ThemeColors } from '../../theme/tokens';
-import { spacing, radius } from '../../theme/tokens';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useThemeStore } from '../../../store/useThemeStore';
+import type { ThemeColors } from '../../../theme/tokens';
+import { spacing, radius } from '../../../theme/tokens';
 
 export default function SettingsScreen() {
   const { theme, colors } = useThemeColors();

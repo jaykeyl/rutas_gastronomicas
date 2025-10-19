@@ -9,23 +9,23 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-import { useThemeColors } from "../../../hooks/useThemeColors";
-import { spacing, radius } from "../../../theme/tokens";
-import { platos as data } from "../../../data/platos";
-import { useCatalogStore, type Plato } from "../../../store/catalog";
-import { useCurrency } from "../../../hooks/useCurrency";
-import { openInGoogleMapsQuery } from "../../../utils/openMaps";
-import { formatPicosidad } from "../../../utils/picosidad";
+import { useThemeColors } from "../../../../hooks/useThemeColors";
+import { spacing, radius } from "../../../../theme/tokens";
+import { platos as data } from "../../../../data/platos";
+import { useCatalogStore, type Plato } from "../../../../store/catalog";
+import { useCurrency } from "../../../../hooks/useCurrency";
+import { openInGoogleMapsQuery } from "../../../../utils/openMaps";
+import { formatPicosidad } from "../../../../utils/picosidad";
 
-import { IS_ADMIN } from "../../../constants/roles";
-import { useModerationStore } from "../../../store/moderation";
-import { ModerationBar } from "../../../components/ModerationBar";
+import { IS_ADMIN } from "../../../../constants/roles";
+import { useModerationStore } from "../../../../store/moderation";
+import { ModerationBar } from "../../../../components/ModerationBar";
 
-import { useReviewsStore } from "../../../store/reviews";
-import { averageRating } from "../../../utils/rating";
-import StarRating from "../../../components/StarRating";
-import ReviewsList from "../../../components/ReviewsList";
-import AddReviewForm from "../../../components/AddReviewForm";
+import { useReviewsStore } from "../../../../store/reviews";
+import { averageRating } from "../../../../utils/rating";
+import StarRating from "../../../../components/StarRating";
+import ReviewsList from "../../../../components/ReviewsList";
+import AddReviewForm from "../../../../components/AddReviewForm";
 
 export default function PlatoDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();

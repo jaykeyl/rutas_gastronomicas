@@ -1,8 +1,7 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerToggleButton } from "@react-navigation/drawer";
-import { useThemeColors } from "../../hooks/useThemeColors";
-
+import { useThemeColors } from "../../../hooks/useThemeColors";
 export default function TabsLayout() {
   const { colors } = useThemeColors();
   const icon = (name: keyof typeof Ionicons.glyphMap) =>

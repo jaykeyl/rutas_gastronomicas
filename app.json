@@ -2,6 +2,7 @@
   "expo": {
     "name": "rutas_gastronomicas",
     "slug": "rutas_gastronomicas",
+    "scheme": "rutasgastronomicas",  
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

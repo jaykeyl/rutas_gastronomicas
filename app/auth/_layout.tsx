@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useThemeColors } from "../hooks/useThemeColors";
+import { useThemeColors } from "../../hooks/useThemeColors";
 
 export default function AuthLayout() {
     const { theme, colors } = useThemeColors();

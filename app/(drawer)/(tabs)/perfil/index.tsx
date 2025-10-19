@@ -1,9 +1,14 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useThemeColors } from "../../../hooks/useThemeColors";
-import { spacing, radius } from "../../../theme/tokens";
+import { useThemeColors } from "../../../../hooks/useThemeColors";
+import { spacing, radius } from "../../../../theme/tokens";
+import { TouchableOpacity } from "react-native";
+import { logOut } from "../../../../services/auth";
+import { useUserStore } from "../../../../store/useUserStore";
+import { router } from "expo-router";
 
 export default function PerfilDrawer() {
   const { colors } = useThemeColors();
+  const onLogout = async () => { await logOut(); useUserStore.getState().logout(); router.replace("/auth"); };
   return (
     <View style={[styles.wrap, { backgroundColor: colors.background }]}>
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border,
@@ -11,6 +16,9 @@ export default function PerfilDrawer() {
         <View style={styles.avatar} />
         <Text style={[styles.title, { color: colors.text }]}>Configura tu cuentaaaaaaa</Text>
         <Text style={{ color: colors.muted, marginTop: spacing.sm }}>iiwiweiwiwe</Text>
+        <TouchableOpacity onPress={onLogout} style={{ marginTop: 16 }}>
+          <Text style={{ color: colors.primary, fontWeight:'700' }}>Cerrar sesión</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

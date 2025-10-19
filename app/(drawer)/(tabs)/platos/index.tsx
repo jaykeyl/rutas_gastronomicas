@@ -1,15 +1,15 @@
 import { FlatList, Text, View } from "react-native";
 import { useMemo, useState, useEffect } from "react";
-import { useThemeColors } from "../../../hooks/useThemeColors";
-import { spacing } from "../../../theme/tokens";
-import SearchBar from "../../../components/SearchBar";
-import ZonaFilter from "../../../components/ZonaFilter";
-import DishCard from "../../../components/DishCard";
-import { platos as data } from "../../../data/platos";
-import { useCatalogStore, type Plato } from "../../../store/catalog";
-import PicosidadRange from "../../../components/PicosidadRange";
-import { useModerationStore } from "../../../store/moderation";
-import { IS_ADMIN } from "../../../constants/roles"; 
+import { useThemeColors } from "../../../../hooks/useThemeColors";
+import { spacing } from "../../../../theme/tokens";
+import SearchBar from "../../../../components/SearchBar";
+import ZonaFilter from "../../../../components/ZonaFilter";
+import DishCard from "../../../../components/DishCard";
+import { platos as data } from "../../../../data/platos";
+import { useCatalogStore, type Plato } from "../../../../store/catalog";
+import PicosidadRange from "../../../../components/PicosidadRange";
+import { useModerationStore } from "../../../../store/moderation";
+import { IS_ADMIN } from "../../../../constants/roles"; 
 
 const ZONAS = ["Todos","Miraflores","Sopocachi","El Alto","San Pedro"] as const;
 

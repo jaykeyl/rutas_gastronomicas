@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { useThemeColors } from "../../../hooks/useThemeColors";
-import { spacing, radius } from "../../../theme/tokens";
-import { useCatalogStore } from "../../../store/catalog";
-import DishCard from "../../../components/DishCard";
+import { useThemeColors } from "../../../../hooks/useThemeColors";
+import { spacing, radius } from "../../../../theme/tokens";
+import { useCatalogStore } from "../../../../store/catalog";
+import DishCard from "../../../../components/DishCard";
 
 export default function FavoritosTab() {
   const { colors } = useThemeColors();

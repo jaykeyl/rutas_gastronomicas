@@ -1,12 +1,12 @@
 import { Image, Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
-import { useThemeColors } from "../../hooks/useThemeColors";
-import { useCurrency } from "../../hooks/useCurrency";
-import { useDailyDishes } from "../../hooks/useDailyDishes";
-import { useCatalogStore } from "../../store/catalog";
-import { platos as data } from "../../data/platos";
-import { spacing, radius } from "../../theme/tokens";
-import type { Dish } from "../../components/DishCard";
+import { useThemeColors } from "../../../hooks/useThemeColors";
+import { useCurrency } from "../../../hooks/useCurrency";
+import { useDailyDishes } from "../../../hooks/useDailyDishes";
+import { useCatalogStore } from "../../../store/catalog";
+import { platos as data } from "../../../data/platos";
+import { spacing, radius } from "../../../theme/tokens";
+import type { Dish } from "../../../components/DishCard";
 
 export default function Home() {
   const { colors } = useThemeColors();

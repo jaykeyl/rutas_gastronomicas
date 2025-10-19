@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { DrawerToggleButton } from "@react-navigation/drawer";
-import { useThemeColors } from "../../../hooks/useThemeColors";
+import { useThemeColors } from "../../../../hooks/useThemeColors";
 
 export default function PlatosStack() {
   const { colors } = useThemeColors();
