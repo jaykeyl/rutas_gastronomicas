@@ -3,12 +3,13 @@ import { create } from "zustand";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { ZonaId } from "../data/zonas";
 
 export type Plato = {
   id: string;
   nombre: string;
   precioReferencial: number;
-  zona: string;
+  zona: ZonaId;
   picUri: ImageSourcePropType;
   descripcionCorta: string;
   picosidad: number;

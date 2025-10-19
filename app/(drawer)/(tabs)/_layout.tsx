@@ -23,6 +23,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" options={{ title: "Inicio", tabBarLabel: "Inicio", tabBarIcon: icon("home-outline") }} />
       <Tabs.Screen name="platos" options={{ headerShown: false, tabBarLabel: "Platos", tabBarIcon: icon("restaurant-outline") }} />
       <Tabs.Screen name="favoritos/index" options={{ title: "Favoritos", tabBarLabel: "Favoritos", tabBarIcon: icon("heart-outline") }} />
+      <Tabs.Screen name="mapa/index" options={{ title: "Mapa", tabBarLabel: "Mapa", tabBarIcon: icon("map-outline") }} />
       <Tabs.Screen name="perfil/index" options={{ title: "Perfil", tabBarLabel: "Perfil", tabBarIcon: icon("person-circle-outline") }} />
     </Tabs>
   );

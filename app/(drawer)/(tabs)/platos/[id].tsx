@@ -26,6 +26,7 @@ import { averageRating } from "../../../../utils/rating";
 import StarRating from "../../../../components/StarRating";
 import ReviewsList from "../../../../components/ReviewsList";
 import AddReviewForm from "../../../../components/AddReviewForm";
+import { zonasMap } from "../../../../data/zonas";
 
 export default function PlatoDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -144,9 +145,15 @@ export default function PlatoDetail() {
 
         <View style={{ marginTop: spacing.md }}>
           <TouchableOpacity
-            onPress={() =>
-              openInGoogleMapsQuery(`${plato.nombre} ${plato.zona} La Paz Bolivia`)
-            }
+            onPress={() => {
+              const z = zonasMap[plato.zona];
+              const tipico = z?.lugarTipico;
+              const query = tipico
+                ? `${plato.nombre} cerca de ${tipico}`
+                : `${plato.nombre} ${plato.zona} La Paz Bolivia`;
+
+              openInGoogleMapsQuery(query);
+            }}
             style={{
               flexDirection: "row",
               alignItems: "center",

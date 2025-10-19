@@ -2,6 +2,7 @@ import { FlatList, Text, View } from "react-native";
 import { useMemo, useState, useEffect } from "react";
 import { useThemeColors } from "../../../../hooks/useThemeColors";
 import { spacing } from "../../../../theme/tokens";
+import { useLocalSearchParams } from "expo-router";
 import SearchBar from "../../../../components/SearchBar";
 import ZonaFilter from "../../../../components/ZonaFilter";
 import DishCard from "../../../../components/DishCard";
@@ -10,13 +11,21 @@ import { useCatalogStore, type Plato } from "../../../../store/catalog";
 import PicosidadRange from "../../../../components/PicosidadRange";
 import { useModerationStore } from "../../../../store/moderation";
 import { IS_ADMIN } from "../../../../constants/roles"; 
+import { zonas, zonasIds, type ZonaId } from "../../../../data/zonas";
 
-const ZONAS = ["Todos","Miraflores","Sopocachi","El Alto","San Pedro"] as const;
+const ZONAS = ["Todos", ...zonasIds] as const;
 
 export default function PlatosList() {
   const { colors } = useThemeColors();
+
+  const params = useLocalSearchParams();
+  const zonaParam = params?.zona as ZonaId | undefined;
+
+
   const [query, setQuery] = useState("");
-  const [zona, setZona] = useState<(typeof ZONAS)[number]>("Todos");
+  const [zona, setZona] = useState<(typeof ZONAS)[number]>(
+    zonaParam && zonasIds.includes(zonaParam) ? zonaParam : "Todos"
+  );
   const [picRange, setPicRange] = useState({ min: 0, max: 5 });
 
   const platos = useCatalogStore(s => s.platos);
@@ -27,6 +36,12 @@ export default function PlatosList() {
   useEffect(() => {
     if (!platos.length) setPlatos(data);
   }, [platos.length, setPlatos]);
+
+  useEffect(() => {
+    if (zonaParam && zonasIds.includes(zonaParam) && zonaParam !== zona) {
+      setZona(zonaParam);
+    }
+  }, [zonaParam, zona]);
 
   const filtrados = useMemo(
     () =>
