@@ -17,6 +17,16 @@ import { useCurrency } from "../../../hooks/useCurrency";
 import { openInGoogleMapsQuery } from "../../../utils/openMaps";
 import { formatPicosidad } from "../../../utils/picosidad";
 
+import { IS_ADMIN } from "../../../constants/roles";
+import { useModerationStore } from "../../../store/moderation";
+import { ModerationBar } from "../../../components/ModerationBar";
+
+import { useReviewsStore } from "../../../store/reviews";
+import { averageRating } from "../../../utils/rating";
+import StarRating from "../../../components/StarRating";
+import ReviewsList from "../../../components/ReviewsList";
+import AddReviewForm from "../../../components/AddReviewForm";
+
 export default function PlatoDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { colors } = useThemeColors();
@@ -36,6 +46,14 @@ export default function PlatoDetail() {
       </View>
     );
   }
+
+  const statusMap = useModerationStore((s) => s.statusMap);
+  const setStatus = useModerationStore((s) => s.setStatus);
+  const status = statusMap[plato.id] ?? "approved";
+
+  const byDish = useReviewsStore((s) => s.byDish);
+  const reviews = byDish[plato.id]?.filter(r => r.status === "approved") ?? [];
+  const avg = averageRating(reviews.map(r => r.rating));
 
   const imageSource =
     typeof plato.picUri === "string" ? { uri: plato.picUri } : plato.picUri;
@@ -110,12 +128,19 @@ export default function PlatoDetail() {
           {format(plato.precioReferencial)}
         </Text>
 
-        <Text style={{ color: colors.muted, marginBottom: spacing.md }}>
+        <View style={{ marginTop: spacing.xs }}>
+          <StarRating value={avg} suffix="/5" />
+        </View>
+
+        <Text style={{ color: colors.muted, marginTop: spacing.xs }}>
           {formatPicosidad(plato.picosidad)}
         </Text>
 
+        {IS_ADMIN && (
+          <ModerationBar value={status} onChange={(v) => setStatus(plato.id, v)} />
+        )}
 
-        <Text style={{ color: colors.text }}>{plato.descripcionCorta}</Text>
+        <Text style={{ color: colors.text, marginTop: spacing.sm }}>{plato.descripcionCorta}</Text>
 
         <View style={{ marginTop: spacing.md }}>
           <TouchableOpacity
@@ -141,6 +166,10 @@ export default function PlatoDetail() {
             <Text style={{ color: colors.text, fontWeight: "600" }}>Ver en mapa</Text>
           </TouchableOpacity>
         </View>
+
+        <AddReviewForm platoId={plato.id} />
+
+        <ReviewsList platoId={plato.id} />
       </View>
     </ScrollView>
   );

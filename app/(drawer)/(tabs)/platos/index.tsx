@@ -8,6 +8,8 @@ import DishCard from "../../../components/DishCard";
 import { platos as data } from "../../../data/platos";
 import { useCatalogStore, type Plato } from "../../../store/catalog";
 import PicosidadRange from "../../../components/PicosidadRange";
+import { useModerationStore } from "../../../store/moderation";
+import { IS_ADMIN } from "../../../constants/roles"; 
 
 const ZONAS = ["Todos","Miraflores","Sopocachi","El Alto","San Pedro"] as const;
 
@@ -20,6 +22,8 @@ export default function PlatosList() {
   const platos = useCatalogStore(s => s.platos);
   const setPlatos = useCatalogStore(s => s.setPlatos);
 
+  const statusMap = useModerationStore((s) => s.statusMap);
+
   useEffect(() => {
     if (!platos.length) setPlatos(data);
   }, [platos.length, setPlatos]);
@@ -29,8 +33,13 @@ export default function PlatosList() {
       platos
         .filter((p) => p.nombre.toLowerCase().includes(query.toLowerCase()))
         .filter((p) => (zona === "Todos" ? true : p.zona === zona))
-        .filter((p) => p.picosidad >= picRange.min && p.picosidad <= picRange.max),
-    [platos, query, zona, picRange]
+        .filter((p) => p.picosidad >= picRange.min && p.picosidad <= picRange.max)
+        .filter((p) => {
+          if (IS_ADMIN) return true;
+          const st = statusMap[p.id] ?? "approved";
+          return st === "approved";
+        }),
+    [platos, query, zona, picRange, statusMap] 
   );
 
   return (
@@ -46,7 +55,7 @@ export default function PlatosList() {
         data={filtrados}
         keyExtractor={(it) => it.id}
         ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
-        renderItem={({ item }) => <DishCard item={item} />} 
+        renderItem={({ item }) => <DishCard item={item} />}
       />
     </View>
   );

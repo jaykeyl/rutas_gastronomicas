@@ -6,6 +6,9 @@ import { useCurrency } from "../hooks/useCurrency";
 import { spacing, radius } from "../theme/tokens";
 import { useCatalogStore, type Plato } from "../store/catalog";
 import { formatPicosidad } from "../utils/picosidad";
+import { useReviewsStore } from "../store/reviews";
+import { averageRating } from "../utils/rating";
+import StarRating from "./StarRating";
 
 export type Dish = Plato;
 
@@ -14,6 +17,10 @@ export default function DishCard({ item }: { item: Dish }) {
   const { format } = useCurrency();
   const fav = useCatalogStore((s) => s.favoritos.has(item.id));
   const toggleFavorito = useCatalogStore((s) => s.toggleFavorito);
+
+  const byDish = useReviewsStore((s) => s.byDish);
+  const reviews = byDish[item.id]?.filter(r => r.status === "approved") ?? [];
+  const avg = averageRating(reviews.map(r => r.rating));
 
   return (
     <View
@@ -29,16 +36,19 @@ export default function DishCard({ item }: { item: Dish }) {
             <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
               {item.nombre}
             </Text>
+
+            <StarRating value={avg} />
+
             <Text style={{ color: colors.muted }}>
               {formatPicosidad(item.picosidad)}
             </Text>
-
           </View>
         </Pressable>
       </Link>
 
       <View style={{ alignItems: "flex-end", gap: 4 }}>
         <Text style={[styles.price, { color: colors.text }]}>{format(item.precioReferencial)}</Text>
+
         <TouchableOpacity
           onPress={() => toggleFavorito(item.id)}
           hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
