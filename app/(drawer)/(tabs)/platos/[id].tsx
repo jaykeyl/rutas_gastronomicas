@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { useThemeColors } from "../../../../hooks/useThemeColors";
 import { spacing, radius } from "../../../../theme/tokens";
@@ -28,6 +29,9 @@ import ReviewsList from "../../../../components/ReviewsList";
 import AddReviewForm from "../../../../components/AddReviewForm";
 import { zonasMap } from "../../../../data/zonas";
 
+import { useEffect, useMemo, useState } from "react";
+import { fetchPlatoById } from "../../../../services/platos"; 
+
 export default function PlatoDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { colors } = useThemeColors();
@@ -37,13 +41,42 @@ export default function PlatoDetail() {
   const fav = useCatalogStore((s) => (id ? s.favoritos.has(id) : false));
   const toggleFavorito = useCatalogStore((s) => s.toggleFavorito);
 
+  const [remote, setRemote] = useState<Plato | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const all: Plato[] = platos.length ? platos : data;
-  const plato = all.find((p) => p.id === id);
+
+  const plato = useMemo(
+    () => all.find((p) => p.id === id) ?? remote ?? null,
+    [all, id, remote]
+  );
+
+  useEffect(() => {
+    if (!id) return;
+    if (plato) return; 
+    let mounted = true;
+    (async () => {
+      setLoading(true);
+      try {
+        const p = await fetchPlatoById(id);
+        if (mounted) setRemote(p);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [id, plato]);
 
   if (!plato) {
     return (
-      <View style={{ padding: spacing.lg }}>
-        <Text>No encontrado</Text>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background }}>
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <Text style={{ color: colors.text }}>No encontrado</Text>
+        )}
       </View>
     );
   }
@@ -53,8 +86,8 @@ export default function PlatoDetail() {
   const status = statusMap[plato.id] ?? "approved";
 
   const byDish = useReviewsStore((s) => s.byDish);
-  const reviews = byDish[plato.id]?.filter(r => r.status === "approved") ?? [];
-  const avg = averageRating(reviews.map(r => r.rating));
+  const reviews = byDish[plato.id]?.filter((r) => r.status === "approved") ?? [];
+  const avg = averageRating(reviews.map((r) => r.rating));
 
   const imageSource =
     typeof plato.picUri === "string" ? { uri: plato.picUri } : plato.picUri;
