@@ -1,23 +1,20 @@
-import { useEffect, useState } from 'react';
-import { listenAuth } from '../services/auth';
-import { useUserStore } from '../store/useUserStore';
+import { useEffect, useState } from "react";
+import { listenAuth } from "../services/auth";
+import { useUserStore } from "../store/useUserStore";
 
-export function useAuthListener() {
-  const setUser = useUserStore(s => s.setUser);
+export const useAuthListener = () => {
+  const setUser = useUserStore((s) => s.setUser);
+  const setLoading = useUserStore((s) => s.setLoading);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const unsub = listenAuth(u => {
-      setUser(u ? {
-        uid: u.uid,
-        email: u.email || '',
-        displayName: u.displayName || '',
-        photoURL: u.photoURL || '',
-      } : null);
+    const off = listenAuth((u) => {
+      setUser(u ? { uid: u.uid, email: u.email, displayName: u.displayName, photoURL: u.photoURL } : null);
+      setLoading(false);
       setReady(true);
     });
-    return unsub;
-  }, []);
+    return off;
+  }, [setUser, setLoading]);
 
   return { ready };
-}
+};

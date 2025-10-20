@@ -1,17 +1,19 @@
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useThemeColors } from "../hooks/useThemeColors";
+import { Stack } from 'expo-router';
+import { useAuthListener } from '../hooks/useAuthListener';
+import { useUserStore } from '../store/useUserStore';
+import { View, ActivityIndicator } from 'react-native';
 
 export default function RootLayout() {
-  const { colors } = useThemeColors();
-  return (
-    <>
-      <StatusBar style="auto" />
-      <Stack screenOptions={{ headerStyle: { backgroundColor: colors.surface }, headerTintColor: colors.text, headerShown: false, }}>
-        <Stack.Screen name="auth" />
-        <Stack.Screen name="(drawer)" />
-        <Stack.Screen name="explorar" options={{ headerShown: true, title: "Explorar" }} />
-      </Stack>
-    </>
-  );
+  useAuthListener();
+  const loading = useUserStore((s) => s.loading);
+
+  if (loading) {
+    return (
+      <View style={{ flex:1, alignItems:'center', justifyContent:'center' }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return <Stack screenOptions={{ headerShown: false }} />;
 }
