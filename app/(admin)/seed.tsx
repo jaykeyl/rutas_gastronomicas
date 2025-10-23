@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, Text, Button, ActivityIndicator } from "react-native";
-import { seedAllPlaces } from "../../../../services/placesRepo";
+import { seedAllPlaces } from "../../services/placesRepo";
 
 export default function SeedScreen() {
     const [status, setStatus] = useState<"idle" | "running" | "done" | "error">("idle");
