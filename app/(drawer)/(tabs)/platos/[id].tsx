@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
@@ -28,6 +28,7 @@ import StarRating from "../../../../components/StarRating";
 import ReviewsList from "../../../../components/ReviewsList";
 import AddReviewForm from "../../../../components/AddReviewForm";
 import { zonasMap } from "../../../../data/zonas";
+import { dishKeyFromName } from "../../../../utils/dishKey";
 
 import { useEffect, useMemo, useState } from "react";
 import { fetchPlatoById } from "../../../../services/platos"; 
@@ -80,6 +81,8 @@ export default function PlatoDetail() {
       </View>
     );
   }
+
+    const dishKey = dishKeyFromName(plato.nombre);
 
   const statusMap = useModerationStore((s) => s.statusMap);
   const setStatus = useModerationStore((s) => s.setStatus);
@@ -177,34 +180,30 @@ export default function PlatoDetail() {
         <Text style={{ color: colors.text, marginTop: spacing.sm }}>{plato.descripcionCorta}</Text>
 
         <View style={{ marginTop: spacing.md }}>
-          <TouchableOpacity
-            onPress={() => {
-              const z = zonasMap[plato.zona];
-              const tipico = z?.lugarTipico;
-              const query = tipico
-                ? `${plato.nombre} cerca de ${tipico}`
-                : `${plato.nombre} ${plato.zona} La Paz Bolivia`;
-
-              openInGoogleMapsQuery(query);
-            }}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 8,
-              alignSelf: "flex-start",
-              paddingHorizontal: spacing.lg,
-              paddingVertical: spacing.sm,
-              borderRadius: radius.lg,
-              borderWidth: 1,
-              borderColor: colors.border,
-              backgroundColor: colors.surface,
-            }}
-            accessibilityRole="button"
-            accessibilityLabel="Ver en mapa"
+          <Link
+            href={{ pathname: "/(drawer)/(tabs)/mapa", params: { dishKey } }}
+            asChild
           >
-            <Ionicons name="map-outline" size={18} color={colors.text} />
-            <Text style={{ color: colors.text, fontWeight: "600" }}>Ver en mapa</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+                alignSelf: "flex-start",
+                paddingHorizontal: spacing.lg,
+                paddingVertical: spacing.sm,
+                borderRadius: radius.lg,
+                borderWidth: 1,
+                borderColor: colors.border,
+                backgroundColor: colors.surface,
+              }}
+              accessibilityRole="button"
+              accessibilityLabel="Ver en mapa"
+            >
+              <Ionicons name="map-outline" size={18} color={colors.text} />
+              <Text style={{ color: colors.text, fontWeight: "600" }}>Ver en mapa</Text>
+            </TouchableOpacity>
+          </Link>
         </View>
 
         <AddReviewForm platoId={plato.id} />
