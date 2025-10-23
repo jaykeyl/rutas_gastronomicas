@@ -1,21 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useThemeColors } from "../hooks/useThemeColors";
 import { spacing, radius } from "../theme/tokens";
-import { useReviewsStore, type Review, type ReviewStatus } from "../store/reviews";
-import { IS_ADMIN } from "../constants/roles";
+import { useIsAdmin } from "../constants/roles";
+import { listReviewsPublic, listReviewsPending, setReviewStatus } from "../services/reviews";
 import StarRating from "./StarRating";
+
+type ReviewStatus = "pending" | "approved" | "rejected";
 
 export default function ReviewsList({ platoId }: { platoId: string }) {
   const { colors } = useThemeColors();
   const styles = getStyles(colors);
-  const byDish = useReviewsStore((s) => s.byDish);
-  const setStatus = useReviewsStore((s) => s.setReviewStatus);
+  const IS_ADMIN = useIsAdmin();
 
-  const list = byDish[platoId] ?? [];
-  const visible = IS_ADMIN ? list : list.filter((r) => r.status === "approved");
+  const [approved, setApproved] = useState<any[]>([]);
+  const [pending, setPending]   = useState<any[]>([]);
 
-  if (!visible.length) {
+  const load = async () => {
+    const pub = await listReviewsPublic(platoId);
+    setApproved(pub);
+    if (IS_ADMIN) {
+      setPending(await listReviewsPending(platoId));
+    } else {
+      setPending([]);
+    }
+  };
+
+  useEffect(() => { load(); }, [platoId, IS_ADMIN]);
+
+  const onAction = async (id: string, status: "approved" | "rejected") => {
+    await setReviewStatus(platoId, id, status);
+    await load();
+  };
+
+  const emptyForUser = !IS_ADMIN && approved.length === 0;
+
+  if (emptyForUser) {
     return (
       <Text style={{ color: colors.muted, marginTop: spacing.md }}>
         Aún no hay reseñas.
@@ -24,44 +44,67 @@ export default function ReviewsList({ platoId }: { platoId: string }) {
   }
 
   return (
-    <View style={{ marginTop: spacing.md, gap: spacing.sm }}>
-      {visible.map((r) => (
-        <View
-          key={r.id}
-          style={[
-            styles.card,
-            { borderColor: colors.border, backgroundColor: colors.surface, shadowColor: colors.shadow },
-          ]}
-        >
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-            <StarRating value={r.rating} />
-            <StatusBadge status={r.status} />
-          </View>
-          {r.comment ? (
-            <Text style={{ color: colors.text, marginTop: spacing.xs }}>{r.comment}</Text>
-          ) : null}
+    <View style={{ marginTop: spacing.md, gap: spacing.md }}>
+      {IS_ADMIN && pending.length > 0 && (
+        <View>
+          <Text style={{ color: colors.muted, marginBottom: spacing.xs }}>
+            Pendientes ({pending.length})
+          </Text>
+          {pending.map((r) => (
+            <View
+              key={r.id}
+              style={[
+                styles.card,
+                { borderColor: colors.border, backgroundColor: colors.surface, shadowColor: colors.shadow },
+              ]}
+            >
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <StarRating value={r.rating} />
+                <StatusBadge status={r.status} />
+              </View>
+              {r.comment ? (
+                <Text style={{ color: colors.text, marginTop: spacing.xs }}>{r.comment}</Text>
+              ) : null}
 
-          {IS_ADMIN && (
-            <View style={styles.actions}>
-              {(["pending","approved","rejected"] as const).map((st) => (
+              <View style={styles.actions}>
                 <TouchableOpacity
-                  key={st}
-                  onPress={() => setStatus(platoId, r.id, st)}
-                  style={[
-                    styles.actionChip,
-                    { borderColor: colors.border, backgroundColor: colors.surface },
-                    r.status === st && { borderColor: colors.text },
-                  ]}
+                  onPress={() => onAction(r.id, "approved")}
+                  style={[styles.actionChip, { borderColor: colors.border, backgroundColor: colors.surface }]}
                 >
-                  <Text style={{ color: colors.text, fontWeight: "600" }}>
-                    {st}
-                  </Text>
+                  <Text style={{ color: colors.text, fontWeight: "600" }}>Aprobar</Text>
                 </TouchableOpacity>
-              ))}
+                <TouchableOpacity
+                  onPress={() => onAction(r.id, "rejected")}
+                  style={[styles.actionChip, { borderColor: colors.border, backgroundColor: colors.surface }]}
+                >
+                  <Text style={{ color: colors.text, fontWeight: "600" }}>Rechazar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          )}
+          ))}
         </View>
-      ))}
+      )}
+
+      <View>
+        <Text style={{ color: colors.muted, marginBottom: spacing.xs }}>Reseñas</Text>
+        {approved.map((r) => (
+          <View
+            key={r.id}
+            style={[
+              styles.card,
+              { borderColor: colors.border, backgroundColor: colors.surface, shadowColor: colors.shadow },
+            ]}
+          >
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <StarRating value={r.rating} />
+              <StatusBadge status={r.status as ReviewStatus} />
+            </View>
+            {r.comment ? (
+              <Text style={{ color: colors.text, marginTop: spacing.xs }}>{r.comment}</Text>
+            ) : null}
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -75,34 +118,37 @@ function StatusBadge({ status }: { status: ReviewStatus }) {
   }[status];
 
   return (
-    <View style={{
-      paddingHorizontal: spacing.md,
-      paddingVertical: 6,
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      borderColor: pill.bd,
-    }}>
+    <View
+      style={{
+        paddingHorizontal: spacing.md,
+        paddingVertical: 6,
+        borderRadius: radius.lg,
+        borderWidth: 1,
+        borderColor: pill.bd,
+      }}
+    >
       <Text style={{ color: colors.text, fontWeight: "600" }}>{pill.txt}</Text>
     </View>
   );
 }
 
-const getStyles = (colors: any) => StyleSheet.create({
-  card: {
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    padding: spacing.md,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 1,
-    shadowRadius: 18,
-    elevation: 8,
-    gap: spacing.xs,
-  },
-  actions: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.sm },
-  actionChip: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-  },
-});
+const getStyles = (colors: any) =>
+  StyleSheet.create({
+    card: {
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      padding: spacing.md,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 1,
+      shadowRadius: 18,
+      elevation: 8,
+      gap: spacing.xs,
+    },
+    actions: { flexDirection: "row", gap: spacing.sm, marginTop: spacing.sm },
+    actionChip: {
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.sm,
+      borderRadius: radius.lg,
+      borderWidth: 1,
+    },
+  });
