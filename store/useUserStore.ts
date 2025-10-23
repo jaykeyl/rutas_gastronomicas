@@ -1,20 +1,26 @@
 import { create } from 'zustand';
 
-export type User = {
+export type UserPublic = {
   uid: string;
-  email: string;
-  displayName?: string;
-  photoURL?: string;
-} | null;
+  email?: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
+};
 
-type UserStore = {
-  user: User;
-  setUser: (user: User) => void;
+type State = {
+  user: UserPublic | null;
+  loading: boolean;
+};
+type Actions = {
+  setUser: (u: UserPublic | null) => void;
+  setLoading: (v: boolean) => void;
   logout: () => void;
 };
 
-export const useUserStore = create<UserStore>((set) => ({
+export const useUserStore = create<State & Actions>((set) => ({
   user: null,
-  setUser: (user) => set({ user }),
+  loading: true,
+  setUser: (u) => set({ user: u }),
+  setLoading: (v) => set({ loading: v }),
   logout: () => set({ user: null }),
 }));
