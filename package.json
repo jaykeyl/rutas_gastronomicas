@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "bulk:platillos": "node -r dotenv/config scripts/bulk-upload-platillos.mjs dotenv_config_path=.env.cloudinary"
   },
   "dependencies": {
     "@expo/metro-runtime": "^6.1.2",
@@ -36,6 +37,9 @@
   "devDependencies": {
     "@types/react": "~19.1.0",
     "@types/react-native": "^0.73.0",
+    "cloudinary": "^2.8.0",
+    "dotenv": "^17.2.3",
+    "fast-glob": "^3.3.3",
     "typescript": "~5.9.2"
   },
   "private": true

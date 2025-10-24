@@ -9,13 +9,14 @@ import { platos as data } from "../../../data/platos";
 import { spacing, radius } from "../../../theme/tokens";
 import type { Dish } from "../../../components/DishCard";
 import { SugerenciasCarousel } from "../../../components/SugerenciasCarousel";
+import { applyCloudinaryToPlatos } from "../../../utils/applyCloudinaryToPlatos";
 
 export default function Home() {
   const { colors } = useThemeColors();
   const { format } = useCurrency();
 
   const platosStore = useCatalogStore((s) => s.platos);
-  const all: Dish[] = platosStore.length ? platosStore : data;
+  const all: Dish[] = applyCloudinaryToPlatos(platosStore.length ? platosStore : (data as Dish[]));
   const delDia = useDailyDishes(all, 10);
 
   const favRaw = useCatalogStore((s) => (s as any).favoritosIds ?? (s as any).favoritos);
