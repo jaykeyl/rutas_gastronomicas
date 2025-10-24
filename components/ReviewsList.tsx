@@ -58,6 +58,8 @@ export default function ReviewsList({ platoId }: { platoId: string }) {
                 { borderColor: colors.border, backgroundColor: colors.surface, shadowColor: colors.shadow },
               ]}
             >
+              <Text style={{ color: colors.text, fontWeight: "700" }}>{r.userDisplayName}</Text>
+
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                 <StarRating value={r.rating} />
                 <StatusBadge status={r.status} />
@@ -91,10 +93,12 @@ export default function ReviewsList({ platoId }: { platoId: string }) {
           <View
             key={r.id}
             style={[
-              styles.card,
+              styles.card, styles.cardSpacing, 
               { borderColor: colors.border, backgroundColor: colors.surface, shadowColor: colors.shadow },
             ]}
           >
+            <Text style={{ color: colors.text, fontWeight: "700" }}>{r.userDisplayName}</Text>
+
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <StarRating value={r.rating} />
               <StatusBadge status={r.status as ReviewStatus} />
@@ -112,9 +116,9 @@ export default function ReviewsList({ platoId }: { platoId: string }) {
 function StatusBadge({ status }: { status: ReviewStatus }) {
   const { colors } = useThemeColors();
   const pill = {
-    pending: { txt: "Pending", bd: colors.border },
-    approved: { txt: "Approved", bd: colors.text },
-    rejected: { txt: "Rejected", bd: colors.border },
+    pending: { txt: "Pendiente", bd: colors.border },
+    approved: { txt: "Aprobado", bd: colors.text },
+    rejected: { txt: "Rechazado", bd: colors.border },
   }[status];
 
   return (
@@ -134,6 +138,7 @@ function StatusBadge({ status }: { status: ReviewStatus }) {
 
 const getStyles = (colors: any) =>
   StyleSheet.create({
+    cardSpacing: { marginBottom: spacing.sm },
     card: {
       borderRadius: radius.lg,
       borderWidth: 1,

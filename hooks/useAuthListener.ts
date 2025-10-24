@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { listenAuth } from "../services/auth";
 import { useUserStore } from "../store/useUserStore";
-import { ensureUserDoc, fetchUserRole } from "../services/users";
+import { ensureUserDoc, fetchUserDoc } from "../services/users";
+
+const localPart = (email?: string | null) =>
+  (email ? email.split("@")[0] : null) || null;
 
 export const useAuthListener = () => {
   const setUser = useUserStore((s) => s.setUser);
@@ -13,10 +16,10 @@ export const useAuthListener = () => {
       if (u) {
         const slim = { uid: u.uid, email: u.email, displayName: u.displayName, photoURL: u.photoURL };
         await ensureUserDoc(slim);
-        const role = await fetchUserRole(u.uid);
-        setUser({ ...slim, role });
-        console.log("UID actual =>", u?.uid);
-
+        const userDoc = await fetchUserDoc(u.uid);
+        const displayName =
+          userDoc?.displayName ?? slim.displayName ?? localPart(slim.email) ?? "Usuario";
+        setUser({ ...slim, displayName, role: userDoc?.role ?? "user" });
       } else {
         setUser(null);
       }

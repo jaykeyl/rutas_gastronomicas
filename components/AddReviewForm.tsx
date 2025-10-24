@@ -7,7 +7,7 @@ import { useUserStore } from "../store/useUserStore";
 
 export default function AddReviewForm({ platoId }: { platoId: string }) {
   const { colors } = useThemeColors();
-  const styles = getStyles();
+  const styles = getStyles(colors);
   const user = useUserStore((s) => s.user);
 
   const [rating, setRating] = useState(5);
@@ -22,10 +22,11 @@ export default function AddReviewForm({ platoId }: { platoId: string }) {
       await createReview({
         platoId,
         userUid: user.uid,
-        userDisplayName: user.displayName || user.email || "Anónimo",
+        userDisplayName: user.displayName || user.email || "Usuario",
         rating,
         comment: comment.trim() || undefined,
       });
+
       setRating(5);
       setComment("");
       setSentMsg("¡Gracias! Tu reseña quedó pendiente de aprobación.");
@@ -39,32 +40,26 @@ export default function AddReviewForm({ platoId }: { platoId: string }) {
 
   if (!user) {
     return (
-      <View style={{ marginTop: spacing.md }}>
-        <Text style={{ color: colors.muted }}>Inicia sesión para dejar una reseña.</Text>
+      <View style={styles.container}>
+        <Text style={styles.loginText}>Inicia sesión para dejar una reseña.</Text>
       </View>
     );
   }
 
   return (
-    <View style={{ marginTop: spacing.md }}>
-      <Text style={{ color: colors.muted, marginBottom: spacing.xs, fontWeight: "700" }}>
-        Añadir reseña
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Añadir reseña</Text>
 
       <View style={styles.rowWrap}>
         {[1, 2, 3, 4, 5].map((n) => (
           <TouchableOpacity
             key={n}
             onPress={() => setRating(n)}
-            style={[
-              styles.starChip,
-              { borderColor: colors.border, backgroundColor: colors.surface },
-              rating === n && { borderColor: colors.text },
-            ]}
+            style={[styles.starChip, rating === n && styles.starChipSelected]}
             accessibilityRole="button"
             accessibilityLabel={`Elegir ${n} ${n === 1 ? "estrella" : "estrellas"}`}
           >
-            <Text style={[styles.starText, { color: colors.text }]}>{"★".repeat(n)}</Text>
+            <Text style={styles.starText}>{"★".repeat(n)}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -74,43 +69,37 @@ export default function AddReviewForm({ platoId }: { platoId: string }) {
         onChangeText={setComment}
         placeholder="Escribe tu comentario (opcional)"
         placeholderTextColor={colors.muted}
-        style={[
-          styles.input,
-          { borderColor: colors.border, backgroundColor: colors.surface, color: colors.text },
-        ]}
+        style={styles.input}
         multiline
       />
 
       <TouchableOpacity
         onPress={submit}
         disabled={submitting}
-        style={[
-          styles.btn,
-          { borderColor: colors.border, backgroundColor: colors.surface, opacity: submitting ? 0.6 : 1 },
-        ]}
+        style={[styles.btn, submitting && styles.btnDisabled]}
         accessibilityRole="button"
         accessibilityLabel="Enviar reseña"
       >
-        <Text style={{ color: colors.text, fontWeight: "700" }}>
+        <Text style={styles.btnText}>
           {submitting ? "Enviando..." : "Enviar reseña"}
         </Text>
       </TouchableOpacity>
 
-      {!!sentMsg && (
-        <Text style={{ color: colors.muted, marginTop: spacing.xs, fontSize: 12, fontStyle: "italic" }}>
-          {sentMsg}
-        </Text>
-      )}
+      {!!sentMsg && <Text style={styles.sentMsg}>{sentMsg}</Text>}
 
-      <Text style={{ color: colors.muted, marginTop: spacing.xs, fontSize: 12 }}>
-        * Queda como “pending” hasta que un admin la apruebe.
+      <Text style={styles.note}>
+        * La reseña quedará como "pendiente" hasta que un admin la apruebe.
       </Text>
     </View>
   );
 }
 
-const getStyles = () =>
+const getStyles = (colors: ReturnType<typeof useThemeColors>["colors"]) =>
   StyleSheet.create({
+    container: { marginTop: spacing.md },
+    loginText: { color: colors.muted },
+    title: { color: colors.muted, marginBottom: spacing.xs, fontWeight: "700" },
+
     rowWrap: {
       flexDirection: "row",
       flexWrap: "wrap",
@@ -123,13 +112,20 @@ const getStyles = () =>
       paddingVertical: 6,
       borderRadius: radius.lg,
       borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+    },
+    starChipSelected: {
+      borderColor: colors.text,
     },
     starText: {
       fontSize: 13,
       fontWeight: "700",
       includeFontPadding: false,
       textAlign: "center",
+      color: colors.text,
     },
+
     input: {
       minHeight: 88,
       borderWidth: 1,
@@ -137,7 +133,11 @@ const getStyles = () =>
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.sm,
       textAlignVertical: "top",
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      color: colors.text,
     },
+
     btn: {
       alignSelf: "flex-start",
       marginTop: spacing.sm,
@@ -145,5 +145,12 @@ const getStyles = () =>
       paddingVertical: spacing.sm,
       borderRadius: radius.lg,
       borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
     },
+    btnDisabled: { opacity: 0.6 },
+    btnText: { color: colors.text, fontWeight: "700" },
+
+    sentMsg: { color: colors.muted, marginTop: spacing.xs, fontSize: 12, fontStyle: "italic" },
+    note: { color: colors.muted, marginTop: spacing.xs, fontSize: 12 },
   });

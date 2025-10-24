@@ -5,8 +5,6 @@ import {
   Switch,
   Text,
   View,
-  TouchableOpacity, 
-  Alert,
 } from 'react-native';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useThemeStore } from '../../../store/useThemeStore';
@@ -40,41 +38,6 @@ export default function SettingsScreen() {
       <Text style={styles.helperText}>
         Por defecto se usa el tema del sistema del dispositivo.
       </Text>
-
-      {__DEV__ && (
-        <View style={{ marginTop: spacing.lg }}>
-          <Text
-            style={{
-              color: colors.text,
-              fontWeight: '700',
-              marginBottom: spacing.sm,
-              fontSize: 16,
-            }}
-          >
-            Herramientas de desarrollo
-          </Text>
-
-          <TouchableOpacity
-            onPress={seedPlatosFromMocks}
-            style={{
-              padding: spacing.md,
-              borderRadius: radius.lg,
-              backgroundColor: colors.surface,
-              borderWidth: 1,
-              borderColor: colors.border,
-            }}
-            accessibilityRole="button"
-            accessibilityLabel="Cargar 21 platos a Firestore"
-          >
-            <Text style={{ color: colors.text, fontWeight: '600' }}>
-              Cargar 21 platos a Firestore
-            </Text>
-            <Text style={{ color: colors.muted, fontSize: 12, marginTop: 4 }}>
-              Sube los platos del mock a la colección "platos" (sin fotos)
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
     </View>
   );
 }
@@ -116,28 +79,3 @@ const createStyles = (colors: ThemeColors) =>
       lineHeight: 20,
     },
   });
-
-async function seedPlatosFromMocks() {
-  try {
-    for (const p of MOCKS) {
-      await setDoc(
-        doc(db, 'platos', p.id),
-        {
-          id: p.id,
-          nombre: p.nombre,
-          precioReferencial: p.precioReferencial,
-          zona: p.zona,
-          descripcionCorta: p.descripcionCorta,
-          picosidad: p.picosidad,
-          status: 'approved',
-          createdAt: serverTimestamp(),
-          favCount: 0,
-        },
-        { merge: true }
-      );
-    }
-    Alert.alert('Listo', 'Platos cargados en Firestore ✅');
-  } catch (e: any) {
-    Alert.alert('Error al cargar', e?.message ?? 'Ocurrió un error desconocido');
-  }
-}
