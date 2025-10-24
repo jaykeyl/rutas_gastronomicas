@@ -24,6 +24,9 @@ type CatalogState = {
   setPlatos: (items: Plato[]) => void;
   toggleFavorito: (id: string) => Promise<void>;
 
+  syncFavoritosForUser: (uid: string) => Promise<void>;
+  clearFavoritos: () => void;
+
   _loadRemoteFavoritos: () => Promise<void>;
 };
 
@@ -62,6 +65,13 @@ export const useCatalogStore = create<CatalogState>()(
         }
       },
 
+      syncFavoritosForUser: async (uid: string) => {
+        if (!uid) return;
+        const remote = await loadFavoritos(uid);
+        const merged = new Set<string>([...get().favoritos, ...remote]);
+        set({ favoritos: merged });
+      },
+
       _loadRemoteFavoritos: async () => {
         const uid = useUserStore.getState().user?.uid;
         if (!uid) return;
@@ -69,6 +79,7 @@ export const useCatalogStore = create<CatalogState>()(
         const merged = new Set<string>([...get().favoritos, ...remote]);
         set({ favoritos: merged });
       },
+      clearFavoritos: () => set({ favoritos: new Set<string>(), favCounts: {} }),
     }),
     {
       name: "catalog-store",
