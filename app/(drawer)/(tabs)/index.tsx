@@ -1,3 +1,4 @@
+import React from "react";
 import { Image, Text, View, StyleSheet, ScrollView, FlatList, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { useThemeColors } from "../../../hooks/useThemeColors";
@@ -7,6 +8,7 @@ import { useCatalogStore } from "../../../store/catalog";
 import { platos as data } from "../../../data/platos";
 import { spacing, radius } from "../../../theme/tokens";
 import type { Dish } from "../../../components/DishCard";
+import { SugerenciasCarousel } from "../../../components/SugerenciasCarousel";
 
 export default function Home() {
   const { colors } = useThemeColors();
@@ -15,6 +17,15 @@ export default function Home() {
   const platosStore = useCatalogStore((s) => s.platos);
   const all: Dish[] = platosStore.length ? platosStore : data;
   const delDia = useDailyDishes(all, 10);
+
+  const favRaw = useCatalogStore((s) => (s as any).favoritosIds ?? (s as any).favoritos);
+  const favoritosIds = React.useMemo(() => {
+    if (Array.isArray(favRaw)) return favRaw as string[];
+    if (favRaw instanceof Set) return Array.from(favRaw as Set<string>);
+    return [] as string[];
+  }, [favRaw]);
+
+  const getDishNameById = (id: string) => (all.find(x => x.id === id)?.nombre ?? "");
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.scrollContent}>
@@ -80,6 +91,11 @@ export default function Home() {
           </Link>
         )}
       />
+      <SugerenciasCarousel
+        allPlatos={all}
+        favoriteIds={favoritosIds}
+        getDishNameById={getDishNameById}
+      />
     </ScrollView>
   );
 }
@@ -88,10 +104,22 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { paddingBottom: spacing.xl },
 
-  headerWrap: { paddingHorizontal: spacing.lg, marginTop: spacing.lg, alignItems: "center" },
-  h1: { fontSize: 28, fontWeight: "800", letterSpacing: 0.3, textAlign: "center", marginBottom: spacing.xs },
-  sub: { fontSize: 16, textAlign: "center" },
-
+  headerWrap: { 
+    paddingHorizontal: spacing.lg, 
+    marginTop: spacing.lg, 
+    alignItems: "center" 
+  },
+  h1: { 
+    fontSize: 28, 
+    fontWeight: "800", 
+    letterSpacing: 0.3, 
+    textAlign: "center", 
+    marginBottom: spacing.xs 
+  },
+  sub: { 
+    fontSize: 16, 
+    textAlign: "center" 
+  },
   hero: {
     width: "92%",
     height: 190,
@@ -134,15 +162,46 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  sectionTitle: { fontSize: 18, fontWeight: "900" },
-  sectionSeeAll: { fontSize: 14, fontWeight: "700" },
-
-  carousel: { marginTop: spacing.md },
-  listContent: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md },
-  listSeparator: { width: spacing.md },
-
-  miniCard: { width: 140, padding: 12, borderRadius: radius.lg, borderWidth: 1, elevation: 2 },
-  miniImage: { width: 100, height: 100, borderRadius: 999, alignSelf: "center", marginBottom: 8, backgroundColor: "#eee" },
-  miniName: { fontSize: 14, fontWeight: "800", textAlign: "center" },
-  miniPrice: { fontSize: 12, textAlign: "center", marginTop: 2 },
+  sectionTitle: { 
+    fontSize: 18, 
+    fontWeight: "900" 
+  },
+  sectionSeeAll: { 
+    fontSize: 14, 
+    fontWeight: "700" 
+  },
+  carousel: { 
+    marginTop: spacing.md 
+  },
+  listContent: { 
+    paddingHorizontal: spacing.lg, 
+    paddingBottom: spacing.md 
+  },
+  listSeparator: { 
+    width: spacing.md 
+  },
+  miniCard: { 
+    width: 140, 
+    padding: 12, 
+    borderRadius: radius.lg, 
+    borderWidth: 1, 
+    elevation: 2 },
+  miniImage: { 
+    width: 100, 
+    height: 100, 
+    borderRadius: 999, 
+    alignSelf: "center", 
+    marginBottom: 8, 
+    backgroundColor: "#eee" 
+  },
+  miniName: { 
+    fontSize: 14, 
+    fontWeight: "800", 
+    textAlign: "center" 
+  },
+  miniPrice: { 
+    fontSize: 12, 
+    textAlign: "center", 
+    marginTop: 2 
+  },
 });

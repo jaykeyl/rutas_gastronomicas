@@ -43,7 +43,7 @@ export default function DrawerLayout() {
         }}
       />
 
-      {!loading && isAdmin && (
+      {(!loading && isAdmin) && (
         <Drawer.Screen
           name="admin/reviews-pendientes"
           options={{
