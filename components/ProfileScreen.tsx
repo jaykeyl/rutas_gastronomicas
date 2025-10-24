@@ -217,7 +217,6 @@ export default function ProfileScreen() {
                 ))}
 
                 <TouchableOpacity
-                    onPress={() => router.push("/routes/create")}
                     style={[styles.btnOutline, { borderColor: colors.border, marginTop: spacing.sm, backgroundColor: colors.background }]}
                 >
                     <Text style={[styles.btnOutlineText, { color: colors.text }]}>Crear nueva ruta</Text>
