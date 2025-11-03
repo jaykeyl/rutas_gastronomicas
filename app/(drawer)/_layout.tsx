@@ -43,21 +43,61 @@ export default function DrawerLayout() {
         }}
       />
 
-      {(!loading && isAdmin) && (
-        <Drawer.Screen
-          name="admin/reviews-pendientes"
-          options={{
-            title: "Reseñas pendientes",
-            drawerLabel: "Reseñas pendientes",
-            headerShown: true,
-            headerTitleAlign: "center",
-            headerStyle: styles.header,
-            headerTitleStyle: styles.headerTitle,
-            headerTintColor: colors.text,
-            headerShadowVisible: true,
-          }}
-        />
-      )}
+      <Drawer.Screen
+        name="admin/reviews-pendientes"
+        options={{
+          title: "Reseñas pendientes",
+          drawerLabel: isAdmin ? "Reseñas pendientes" : undefined,
+          drawerItemStyle: isAdmin ? undefined : { display: "none" },
+          headerShown: true,
+          headerTitleAlign: "center",
+          headerStyle: styles.header,
+          headerTitleStyle: styles.headerTitle,
+          headerTintColor: colors.text,
+          headerShadowVisible: true,
+        }}
+      />
+
+      <Drawer.Screen
+        name="profile/mis-resenas"
+        options={{
+          title: "Tus reseñas",
+          drawerItemStyle: { display: "none" },
+          headerShown: true,
+          headerTitleAlign: "center",
+          headerStyle: styles.header,
+          headerTitleStyle: styles.headerTitle,
+          headerTintColor: colors.text,
+          headerShadowVisible: true,
+        }}
+      />
+
+      <Drawer.Screen
+        name="reviews/[platoId]/[reviewId]"
+        options={{
+          title: "Detalle de reseña",
+          drawerItemStyle: { display: "none" },
+          headerShown: true,
+          headerTitleAlign: "center",
+          headerStyle: styles.header,
+          headerTitleStyle: styles.headerTitle,
+          headerTintColor: colors.text,
+          headerShadowVisible: true,
+        }}
+      />
+      <Drawer.Screen
+        name="admin/historial"
+        options={{
+          title: "Historial",
+          drawerItemStyle: { display: "none" },
+          headerShown: true,
+          headerTitleAlign: "center",
+          headerStyle: styles.header,
+          headerTitleStyle: styles.headerTitle,
+          headerTintColor: colors.text,
+          headerShadowVisible: true,
+        }}
+      />
     </Drawer>
   );
 }
@@ -65,7 +105,7 @@ export default function DrawerLayout() {
 const getStyles = (colors: ReturnType<typeof useThemeColors>["colors"]) =>
   StyleSheet.create({
     header: {
-      backgroundColor: colors.surface, 
+      backgroundColor: colors.surface,
     },
     headerTitle: {
       color: colors.text,

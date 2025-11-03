@@ -10,6 +10,7 @@ import {
   serverTimestamp,
   updateDoc,
   where,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
@@ -19,18 +20,20 @@ export type ReviewDTO = {
   id?: string;
   platoId: string;
   userUid: string;
-  userDisplayName: string;
+  userDisplayName: string | null;
   rating: number;
   comment?: string;
-  status: ReviewStatus;
   createdAt?: any;
-  user: { uid: string; displayName: string | null };
+  status: ReviewStatus;
+  adminFeedback?: string | null;
+  moderatedAt?: any;
+  moderatedBy?: { uid: string; name: string } | null;
 };
 
 export async function createReview(input: {
   platoId: string;
   userUid: string;
-  userDisplayName: string;
+  userDisplayName: string | null;
   rating: number;
   comment?: string;
 }) {
@@ -45,49 +48,90 @@ export async function createReview(input: {
 
 export async function listReviewsPublic(platoId: string) {
   const ref = collection(db, "platos", platoId, "reviews");
-  const q = query(
+  const qy = query(
     ref,
     where("status", "==", "approved"),
     orderBy("createdAt", "desc")
   );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+  const snap = await getDocs(qy);
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as any),
+  })) as ReviewDTO[];
 }
 
 export async function listReviewsPending(platoId: string) {
   const ref = collection(db, "platos", platoId, "reviews");
-  const q = query(
+  const qy = query(
     ref,
     where("status", "==", "pending"),
     orderBy("createdAt", "desc")
   );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
-}
-
-export async function setReviewStatus(
-  platoId: string,
-  reviewId: string,
-  status: "approved" | "rejected"
-) {
-  const ref = doc(db, "platos", platoId, "reviews", reviewId);
-  await updateDoc(ref, { status });
+  const snap = await getDocs(qy);
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as any),
+  })) as ReviewDTO[];
 }
 
 export async function listAllPendingReviews() {
-  const q = query(
+  const qy = query(
     collectionGroup(db, "reviews"),
     where("status", "==", "pending"),
     orderBy("createdAt", "desc")
   );
-  const snap = await getDocs(q);
-  return snap.docs
-    .map((d) => ({ id: d.id, ...(d.data() as any) }))
-    .filter((r) => !!r.platoId);
+  const snap = await getDocs(qy);
+  const items = snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as any),
+  })) as ReviewDTO[];
+  return items.filter((r) => !!r.platoId);
+}
+
+export async function listUserReviews(userUid: string) {
+  const qy = query(
+    collectionGroup(db, "reviews"),
+    where("userUid", "==", userUid),
+    orderBy("createdAt", "desc")
+  );
+  const snap = await getDocs(qy);
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as any),
+  })) as ReviewDTO[];
+}
+
+export async function listAllReviewsAdmin() {
+  const qy = query(
+    collectionGroup(db, "reviews"),
+    orderBy("createdAt", "desc")
+  );
+  const snap = await getDocs(qy);
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as any),
+  })) as ReviewDTO[];
+}
+
+export async function setReviewStatus(params: {
+  platoId: string;
+  reviewId: string;
+  status: ReviewStatus;
+  adminUid: string;
+  adminName: string | null;
+  reason?: string;
+}) {
+  const { platoId, reviewId, status, adminUid, adminName, reason } = params;
+  const ref = doc(db, "platos", platoId, "reviews", reviewId);
+  await updateDoc(ref, {
+    status,
+    adminFeedback: reason ?? null,
+    moderatedAt: serverTimestamp(),
+    moderatedBy: { uid: adminUid, name: adminName ?? "Admin" },
+  });
 }
 
 const _platoNameCache: Record<string, string> = {};
-
 export async function getPlatoName(platoId: string): Promise<string> {
   if (_platoNameCache[platoId]) return _platoNameCache[platoId];
   const s = await getDoc(doc(db, "platos", platoId));
@@ -97,4 +141,69 @@ export async function getPlatoName(platoId: string): Promise<string> {
       : "(Plato)";
   _platoNameCache[platoId] = name;
   return name;
+}
+
+export function onAllPendingReviews(cb: (rows: ReviewDTO[]) => void) {
+  const qy = query(
+    collectionGroup(db, "reviews"),
+    where("status", "==", "pending"),
+    orderBy("createdAt", "desc")
+  );
+  const off = onSnapshot(qy, (snap) => {
+    const items = snap.docs.map((d) => ({
+      id: d.id,
+      ...(d.data() as any),
+    })) as ReviewDTO[];
+    cb(items);
+  });
+  return off;
+}
+
+export function onUserReviews(
+  userUid: string,
+  cb: (rows: ReviewDTO[]) => void
+) {
+  const qy = query(
+    collectionGroup(db, "reviews"),
+    where("userUid", "==", userUid),
+    orderBy("createdAt", "desc")
+  );
+  const off = onSnapshot(qy, (snap) => {
+    const items = snap.docs.map((d) => ({
+      id: d.id,
+      ...(d.data() as any),
+    })) as ReviewDTO[];
+    cb(items);
+  });
+  return off;
+}
+
+export function onReviewsPendingForPlato(
+  platoId: string,
+  cb: (rows: ReviewDTO[]) => void
+) {
+  const qy = query(
+    collection(db, "platos", platoId, "reviews"),
+    where("status", "==", "pending"),
+    orderBy("createdAt", "desc")
+  );
+  const off = onSnapshot(qy, (snap) => {
+    const items = snap.docs.map((d) => ({
+      id: d.id,
+      ...(d.data() as any),
+    })) as ReviewDTO[];
+    cb(items);
+  });
+  return off;
+}
+export function onAllReviewsAdmin(cb: (rows: any[]) => void) {
+  const qy = query(
+    collectionGroup(db, "reviews"),
+    orderBy("createdAt", "desc")
+  );
+  const off = onSnapshot(qy, (snap) => {
+    const items = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+    cb(items);
+  });
+  return off;
 }
