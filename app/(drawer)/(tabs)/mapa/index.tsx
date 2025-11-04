@@ -6,7 +6,6 @@ import { useLocalSearchParams } from "expo-router";
 import { useThemeColors } from "../../../../hooks/useThemeColors";
 import { zonas, zonasMap, type ZonaId } from "../../../../data/zonas";
 import { useCatalogStore, type Plato } from "../../../../store/catalog";
-import { useModerationStore } from "../../../../store/moderation";
 import { useNearbyPlaces } from "../../../../hooks/useNearbyPlaces";
 import MapFilters, { type PicoBand } from "../../../../components/MapFilters";
 import { openInMaps } from "../../../../utils/nativeMaps";
@@ -52,10 +51,8 @@ export default function MapaTab() {
   }, []);
 
   const allPlatos = useCatalogStore((s) => s.platos);
-  const statusMap = useModerationStore((s) => s.statusMap);
   const [zonaSel, setZonaSel] = useState<ZonaId | "all">("all");
   const [picoSel, setPicoSel] = useState<PicoBand>("all");
-  const [onlyApproved, setOnlyApproved] = useState(false);
   const [mode, setMode] = useState<Mode>(dishKey ? "lugares" : "platos");
 
   useEffect(() => { if (dishKey) setMode("lugares"); }, [dishKey]);
@@ -70,23 +67,44 @@ export default function MapaTab() {
   const platosVisibles: Plato[] = useMemo(() => {
     const source = (allPlatos && allPlatos.length ? allPlatos : localPlatos) as Plato[];
 
-    const base = source.filter((p) => {
-      if (!onlyApproved) return true;
-      const st = statusMap[p.id] ?? "approved";
-      return st === "approved";
-    });
+    const zoneFiltered = zonaSel === "all" ? source : source.filter((p) => p.zona === zonaSel);
 
-    const zoneFiltered = zonaSel === "all" ? base : base.filter((p) => p.zona === zonaSel);
-
-    return zoneFiltered.filter((p) => {
+    const picoFiltered = zoneFiltered.filter((p) => {
       if (picoSel === "all") return true;
       if (picoSel === "suave") return p.picosidad >= 1 && p.picosidad <= 2;
       if (picoSel === "medio") return p.picosidad === 3;
       return p.picosidad >= 4;
     });
-  }, [allPlatos, statusMap, zonaSel, picoSel, onlyApproved]);
 
-  // ---------- UI helpers ----------
+    return picoFiltered;
+  }, [allPlatos, zonaSel, picoSel]);
+
+  function scatterCoord(
+  lat: number,
+  lng: number,
+  count: number,
+  index: number
+) {
+  if (count === 1) return { latitude: lat, longitude: lng };
+  const base = 0.0009;
+  const rings = Math.ceil(Math.sqrt(count));
+  const ring = Math.floor(index / rings) + 1;
+  const angle = (2 * Math.PI * (index % rings)) / rings;
+  const r = base * ring * 0.6;
+  return {
+    latitude: lat + r * Math.cos(angle),
+    longitude: lng + r * Math.sin(angle),
+  };
+}
+
+const platosPorZona = useMemo(() => {
+  const map: Record<string, Plato[]> = {};
+  for (const p of platosVisibles) {
+    (map[p.zona] ??= []).push(p);
+  }
+  return map;
+}, [platosVisibles]);
+
   const OverlayCard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <View
       pointerEvents="box-none"
@@ -177,17 +195,27 @@ export default function MapaTab() {
           ))}
         
         {mode === "platos" &&
-          platosVisibles.map((p) => {
-            const z = zonasMap[p.zona];
-            return (
-              <Marker
-                key={`plato-${p.id}`}
-                coordinate={{ latitude: z.centroid.latitude, longitude: z.centroid.longitude }}
-                title={p.nombre}
-                description={`Zona: ${z.nombre}`}
-                pinColor="#E53935"
-              />
-            );
+          Object.entries(platosPorZona).flatMap(([zonaId, dishes]) => {
+            const z = zonasMap[zonaId as ZonaId];
+            return dishes.map((p, i) => {
+              const coord = scatterCoord(z.centroid.latitude, z.centroid.longitude, dishes.length, i);
+              return (
+                <Marker
+                  key={`plato-${p.id}`}
+                  coordinate={coord}
+                  title={p.nombre}
+                  description={`Zona: ${z.nombre}`}
+                  pinColor="#E53935"
+                >
+                  <Callout>
+                    <View style={{ maxWidth: 240 }}>
+                      <Text style={{ fontWeight: "700" }}>{p.nombre}</Text>
+                      <Text style={{ color: colors.muted }}>Zona: {z.nombre}</Text>
+                    </View>
+                  </Callout>
+                </Marker>
+              );
+            });
           })}
 
         {mode === "lugares" &&
@@ -227,21 +255,6 @@ export default function MapaTab() {
 
         {mode === "platos" && (
           <View style={{ marginTop: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-            <Pressable
-              onPress={() => setOnlyApproved((v) => !v)}
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 16,
-                backgroundColor: onlyApproved ? colors.primary : colors.surface,
-                borderWidth: 1,
-                borderColor: onlyApproved ? colors.primary : colors.border,
-              }}
-            >
-              <Text style={{ color: onlyApproved ? "#fff" : colors.subtitle, fontWeight: "800" }}>
-                {onlyApproved ? "Solo aprobados" : "Todos los platos"}
-              </Text>
-            </Pressable>
             <Text style={{ color: colors.subtitle, fontWeight: "700" }}>{platosVisibles.length} platos</Text>
           </View>
         )}
