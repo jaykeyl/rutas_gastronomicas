@@ -15,12 +15,18 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Necesitamos tu ubicación para mostrarte platos cercanos y trazar rutas en el mapa."
+}
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
+        "package": "com.rutasgastronomicas.app",
+        "userInterfaceStyle": "automatic"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
