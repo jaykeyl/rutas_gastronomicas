@@ -53,7 +53,7 @@ export default function LoginScreen() {
           <View style={styles.logoWrap}>
             <View style={[styles.logoCard, { backgroundColor: colors.surface, shadowColor: colors.text }]}>
               <Image
-                source={require("../../assets/splash.png")}
+                source={require("../../assets/splashRG.png")}
                 style={{ width: 60, height: 60, resizeMode: "contain" }}
               />
             </View>
