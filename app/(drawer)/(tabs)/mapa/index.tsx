@@ -5,6 +5,7 @@ import * as Location from "expo-location";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColors } from "../../../../hooks/useThemeColors";
 import { zonas, zonasMap, type ZonaId } from "../../../../data/zonas";
+import { platos as localPlatos } from "../../../../data/platos";
 import { useCatalogStore, type Plato } from "../../../../store/catalog";
 import { useModerationStore } from "../../../../store/moderation";
 import { useNearbyPlaces } from "../../../../hooks/useNearbyPlaces";
@@ -56,19 +57,18 @@ export default function MapaTab() {
   const [picoSel, setPicoSel] = useState<PicoBand>("all");
 
   const platosAprobados: Plato[] = useMemo(() => {
-    const base = (allPlatos || []).filter((p) => {
-      const st = statusMap[p.id] ?? "approved";
-      return st === "approved";
-    });
-    const zoneFiltered = zonaSel === "all" ? base : base.filter((p) => p.zona === zonaSel);
-    const picoFiltered = zoneFiltered.filter((p) => {
-      if (picoSel === "all") return true;
-      if (picoSel === "suave") return p.picosidad >= 1 && p.picosidad <= 2;
-      if (picoSel === "medio") return p.picosidad === 3;
-      return p.picosidad >= 4;
-    });
-    return picoFiltered;
-  }, [allPlatos, statusMap, zonaSel, picoSel]);
+  const source = (allPlatos && allPlatos.length ? allPlatos : localPlatos) as Plato[];
+  const base = source.filter((p) => (statusMap[p.id] ?? "approved") === "approved");
+  const zoneFiltered = zonaSel === "all" ? base : base.filter((p) => p.zona === zonaSel);
+  const picoFiltered = zoneFiltered.filter((p) => {
+    if (picoSel === "all") return true;
+    if (picoSel === "suave") return p.picosidad >= 1 && p.picosidad <= 2;
+    if (picoSel === "medio") return p.picosidad === 3;
+    return p.picosidad >= 4;
+  });
+  return picoFiltered;
+}, [allPlatos, statusMap, zonaSel, picoSel]);
+
 
   const [mode, setMode] = useState<Mode>(dishKey ? "lugares" : "zonas");
   useEffect(() => {
@@ -132,7 +132,7 @@ export default function MapaTab() {
         marginRight: 8,
       }}
     >
-      <Text style={{ color: active ? "#fff" : colors.text, fontWeight: "700" }}>{label}</Text>
+      <Text style={{ color: active ? "#fff" : colors.subtitle, fontWeight: "700" }}>{label}</Text>
     </TouchableOpacity>
   );
 
@@ -232,7 +232,7 @@ export default function MapaTab() {
             </Marker>
           ))}
       </MapView>
-      
+
       <OverlayCard>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={{ color: colors.text, fontWeight: "700", fontSize: 18 }}>Mapa</Text>
@@ -263,6 +263,7 @@ export default function MapaTab() {
             onZona={setZonaSel}
             picoSel={picoSel}
             onPico={setPicoSel}
+            disabled={mode !== "aprobados"}
           />
         </View>
       </OverlayCard>
