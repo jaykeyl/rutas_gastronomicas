@@ -1,9 +1,17 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { ScrollView, StyleSheet, Text, Pressable, View } from "react-native";
 import { useThemeColors } from "../hooks/useThemeColors";
 import { zonas, type ZonaId } from "../data/zonas";
 
 export type PicoBand = "all" | "suave" | "medio" | "picante";
+
+type Props = {
+    zonaSel: ZonaId | "all";
+    onZona: (z: ZonaId | "all") => void;
+    picoSel: PicoBand;
+    onPico: (p: PicoBand) => void;
+    disabled?: boolean;
+};
 
 export default function MapFilters({
     zonaSel,
@@ -11,22 +19,20 @@ export default function MapFilters({
     picoSel,
     onPico,
     disabled = false,
-}: {
-    zonaSel: ZonaId | "all";
-    onZona: (z: ZonaId | "all") => void;
-    picoSel: PicoBand;
-    onPico: (p: PicoBand) => void;
-    disabled?: boolean;
-}) {
+}: Props) {
     const { colors } = useThemeColors();
 
     return (
         <View>
             <Text style={[styles.title, { color: colors.text }]}>Filtros</Text>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.row}
+            >
                 <Chip
-                    text="Todas las zonas"
+                    label="Todas las zonas"
                     active={zonaSel === "all"}
                     onPress={() => onZona("all")}
                     disabled={disabled}
@@ -34,7 +40,7 @@ export default function MapFilters({
                 {zonas.map((z) => (
                     <Chip
                         key={z.id}
-                        text={z.nombre}
+                        label={z.nombre}
                         active={zonaSel === z.id}
                         onPress={() => onZona(z.id)}
                         disabled={disabled}
@@ -42,27 +48,31 @@ export default function MapFilters({
                 ))}
             </ScrollView>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={[styles.row, { marginTop: 6 }]}
+            >
                 <Chip
-                    text="Picosidad: Todas"
+                    label="Picosidad: Todas"
                     active={picoSel === "all"}
                     onPress={() => onPico("all")}
                     disabled={disabled}
                 />
                 <Chip
-                    text="Suave (1–2)"
+                    label="Suave (1–2)"
                     active={picoSel === "suave"}
                     onPress={() => onPico("suave")}
                     disabled={disabled}
                 />
                 <Chip
-                    text="Media (3)"
+                    label="Media (3)"
                     active={picoSel === "medio"}
                     onPress={() => onPico("medio")}
                     disabled={disabled}
                 />
                 <Chip
-                    text="Picante (4–5)"
+                    label="Picante (4–5)"
                     active={picoSel === "picante"}
                     onPress={() => onPico("picante")}
                     disabled={disabled}
@@ -73,19 +83,19 @@ export default function MapFilters({
 }
 
 function Chip({
-    text,
+    label,
     active,
     onPress,
     disabled,
 }: {
-    text: string;
+    label: string;
     active: boolean;
     onPress: () => void;
     disabled?: boolean;
 }) {
     const { colors } = useThemeColors();
     return (
-        <TouchableOpacity
+        <Pressable
             onPress={onPress}
             disabled={disabled}
             style={[
@@ -93,31 +103,41 @@ function Chip({
                 {
                     backgroundColor: active ? colors.primary : colors.surface,
                     borderColor: active ? colors.primary : colors.border,
-                    opacity: disabled ? 0.5 : 1,
+                    shadowColor: colors.text,
+                    opacity: disabled ? 0.45 : 1,
                 },
             ]}
         >
             <Text
-                style={{
-                    color: active ? "#fff" : colors.subtitle,
-                    fontWeight: "700",
-                }}
+                style={[
+                    styles.chipText,
+                    { color: active ? "#fff" : colors.subtitle },
+                ]}
             >
-                {text}
+                {label}
             </Text>
-        </TouchableOpacity>
+        </Pressable>
     );
 }
 
 const styles = StyleSheet.create({
-    title: { fontSize: 14, fontWeight: "800", marginBottom: 6 },
+    title: { fontSize: 16, fontWeight: "800", marginBottom: 8 },
+    row: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 2,
+    },
     chip: {
         paddingHorizontal: 16,
-        height: 40,
-        borderRadius: 20,
-        alignItems: "center",
-        justifyContent: "center",
-        marginRight: 10,
+        paddingVertical: 8,
+        borderRadius: 50,
         borderWidth: 1,
+        marginRight: 8,
+        marginBottom: 8,
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 2,
     },
+    chipText: { fontSize: 14, fontWeight: "800" },
 });
