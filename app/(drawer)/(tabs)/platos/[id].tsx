@@ -2,23 +2,20 @@ import { Link, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
-  ScrollView,
   Text,
   View,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
   ActivityIndicator,
+  Animated,
 } from "react-native";
 import { useThemeColors } from "../../../../hooks/useThemeColors";
 import { spacing, radius } from "../../../../theme/tokens";
 import { platos as data } from "../../../../data/platos";
 import { useCatalogStore, type Plato } from "../../../../store/catalog";
 import { useCurrency } from "../../../../hooks/useCurrency";
-import { openInGoogleMapsQuery } from "../../../../utils/openMaps";
 import { formatPicosidad } from "../../../../utils/picosidad";
 
-import { IS_ADMIN } from "../../../../constants/roles";
 import { useModerationStore } from "../../../../store/moderation";
 import { ModerationBar } from "../../../../components/ModerationBar";
 
@@ -27,11 +24,12 @@ import { averageRating } from "../../../../utils/rating";
 import StarRating from "../../../../components/StarRating";
 import ReviewsList from "../../../../components/ReviewsList";
 import AddReviewForm from "../../../../components/AddReviewForm";
-import { zonasMap } from "../../../../data/zonas";
 import { dishKeyFromName } from "../../../../utils/dishKey";
-
-import { useEffect, useMemo, useState } from "react";
-import { fetchPlatoById } from "../../../../services/platos"; 
+import { useEffect, useMemo, useState, useRef } from "react";
+import { fetchPlatoById } from "../../../../services/platos";
+import { useIsAdmin } from "../../../../constants/roles";
+import FadeView from "../../../../components/FadeView";
+import { useFade } from "../../../../hooks/useFade";
 
 export default function PlatoDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -54,7 +52,7 @@ export default function PlatoDetail() {
 
   useEffect(() => {
     if (!id) return;
-    if (plato) return; 
+    if (plato) return;
     let mounted = true;
     (async () => {
       setLoading(true);
@@ -72,7 +70,14 @@ export default function PlatoDetail() {
 
   if (!plato) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: colors.background,
+        }}
+      >
         {loading ? (
           <ActivityIndicator />
         ) : (
@@ -82,76 +87,88 @@ export default function PlatoDetail() {
     );
   }
 
-    const dishKey = dishKeyFromName(plato.nombre);
+  const dishKey = dishKeyFromName(plato.nombre);
 
   const statusMap = useModerationStore((s) => s.statusMap);
   const setStatus = useModerationStore((s) => s.setStatus);
   const status = statusMap[plato.id] ?? "approved";
 
   const byDish = useReviewsStore((s) => s.byDish);
-  const reviews = byDish[plato.id]?.filter((r) => r.status === "approved") ?? [];
+  const reviews =
+    byDish[plato.id]?.filter((r) => r.status === "approved") ?? [];
   const avg = averageRating(reviews.map((r) => r.rating));
 
   const imageSource =
     typeof plato.picUri === "string" ? { uri: plato.picUri } : plato.picUri;
 
-  return (
-    <ScrollView
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xl }}
-    >
-      <View
-        style={[
-          styles.heroWrap,
-          {
-            borderRadius: radius.lg,
-            backgroundColor: colors.surface,
-            shadowColor: colors.shadow,
-          },
-        ]}
-      >
-        <Image source={imageSource} style={styles.hero} resizeMode="cover" />
-        <TouchableOpacity
-          onPress={() => toggleFavorito(plato.id)}
-          style={[styles.favBtn, { backgroundColor: colors.background }]}
-          hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
-          accessibilityRole="button"
-          accessibilityLabel={fav ? "Quitar de favoritos" : "Agregar a favoritos"}
-        >
-          <Ionicons
-            name={fav ? "heart" : "heart-outline"}
-            size={20}
-            color={fav ? "#e11d48" : colors.muted}
-          />
-        </TouchableOpacity>
-      </View>
+  const isAdmin = useIsAdmin();
 
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: radius.lg,
+  const { opacity, transform, fadeIn } = useFade({
+    direction: "up",
+    distance: 16,
+    initialOpacity: 0,
+  });
+  useEffect(() => {
+    fadeIn({ duration: 300 });
+  }, [fadeIn]);
+
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const heroScale = scrollY.interpolate({
+    inputRange: [0, 120],
+    outputRange: [1.02, 1],
+    extrapolate: "clamp",
+  });
+  const heroTranslateY = scrollY.interpolate({
+    inputRange: [0, 120],
+    outputRange: [-6, 0],
+    extrapolate: "clamp",
+  });
+
+  return (
+    <FadeView opacity={opacity} transform={transform} style={{ flex: 1 }}>
+      <Animated.ScrollView
+        style={{ backgroundColor: colors.background }}
+        contentContainerStyle={{
           padding: spacing.lg,
-          shadowColor: colors.shadow,
-          shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: 1,
-          shadowRadius: 18,
-          elevation: 8,
+          paddingBottom: spacing.xl,
         }}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
       >
         <View
-          style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
+          style={[
+            styles.heroWrap,
+            {
+              borderRadius: radius.lg,
+              backgroundColor: colors.surface,
+              shadowColor: colors.shadow,
+            },
+          ]}
         >
-          <Text style={{ fontSize: 18, fontWeight: "800", color: colors.text }}>
-            {plato.nombre}
-          </Text>
-
+          <Animated.Image
+            source={imageSource}
+            style={[
+              styles.hero,
+              {
+                transform: [
+                  { scale: heroScale },
+                  { translateY: heroTranslateY },
+                ],
+              },
+            ]}
+            resizeMode="cover"
+          />
           <TouchableOpacity
             onPress={() => toggleFavorito(plato.id)}
+            style={[styles.favBtn, { backgroundColor: colors.background }]}
             hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
             accessibilityRole="button"
-            accessibilityLabel={fav ? "Quitar de favoritos" : "Agregar a favoritos"}
+            accessibilityLabel={
+              fav ? "Quitar de favoritos" : "Agregar a favoritos"
+            }
           >
             <Ionicons
               name={fav ? "heart" : "heart-outline"}
@@ -161,56 +178,106 @@ export default function PlatoDetail() {
           </TouchableOpacity>
         </View>
 
-        <Text style={{ color: colors.text, fontWeight: "700", marginTop: 4 }}>
-          {format(plato.precioReferencial)}
-        </Text>
-
-        <View style={{ marginTop: spacing.xs }}>
-          <StarRating value={avg} suffix="/5" />
-        </View>
-
-        <Text style={{ color: colors.muted, marginTop: spacing.xs }}>
-          {formatPicosidad(plato.picosidad)}
-        </Text>
-
-        {IS_ADMIN && (
-          <ModerationBar value={status} onChange={(v) => setStatus(plato.id, v)} />
-        )}
-
-        <Text style={{ color: colors.text, marginTop: spacing.sm }}>{plato.descripcionCorta}</Text>
-
-        <View style={{ marginTop: spacing.md }}>
-          <Link
-            href={{ pathname: "/(drawer)/(tabs)/mapa", params: { dishKey } }}
-            asChild
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+            borderWidth: 1,
+            borderRadius: radius.lg,
+            padding: spacing.lg,
+            shadowColor: colors.shadow,
+            shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 1,
+            shadowRadius: 18,
+            elevation: 8,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
           >
-            <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 8,
-                alignSelf: "flex-start",
-                paddingHorizontal: spacing.lg,
-                paddingVertical: spacing.sm,
-                borderRadius: radius.lg,
-                borderWidth: 1,
-                borderColor: colors.border,
-                backgroundColor: colors.surface,
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="Ver en mapa"
+            <Text
+              style={{ fontSize: 18, fontWeight: "800", color: colors.text }}
             >
-              <Ionicons name="map-outline" size={18} color={colors.text} />
-              <Text style={{ color: colors.text, fontWeight: "600" }}>Ver en mapa</Text>
+              {plato.nombre}
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => toggleFavorito(plato.id)}
+              hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
+              accessibilityRole="button"
+              accessibilityLabel={
+                fav ? "Quitar de favoritos" : "Agregar a favoritos"
+              }
+            >
+              <Ionicons
+                name={fav ? "heart" : "heart-outline"}
+                size={20}
+                color={fav ? "#e11d48" : colors.muted}
+              />
             </TouchableOpacity>
-          </Link>
+          </View>
+
+          <Text style={{ color: colors.text, fontWeight: "700", marginTop: 4 }}>
+            {format(plato.precioReferencial)}
+          </Text>
+
+          <View style={{ marginTop: spacing.xs }}>
+            <StarRating value={avg} suffix="/5" />
+          </View>
+
+          <Text style={{ color: colors.muted, marginTop: spacing.xs }}>
+            {formatPicosidad(plato.picosidad)}
+          </Text>
+
+          {isAdmin && (
+            <ModerationBar
+              value={status}
+              onChange={(v) => setStatus(plato.id, v)}
+            />
+          )}
+
+          <Text style={{ color: colors.text, marginTop: spacing.sm }}>
+            {plato.descripcionCorta}
+          </Text>
+
+          <View style={{ marginTop: spacing.md }}>
+            <Link
+              href={{ pathname: "/(drawer)/(tabs)/mapa", params: { dishKey } }}
+              asChild
+            >
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  alignSelf: "flex-start",
+                  paddingHorizontal: spacing.lg,
+                  paddingVertical: spacing.sm,
+                  borderRadius: radius.lg,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  backgroundColor: colors.surface,
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Ver en mapa"
+              >
+                <Ionicons name="map-outline" size={18} color={colors.text} />
+                <Text style={{ color: colors.text, fontWeight: "600" }}>
+                  Ver en mapa
+                </Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
+
+          <AddReviewForm platoId={plato.id} />
+          <ReviewsList platoId={plato.id} />
         </View>
-
-        <AddReviewForm platoId={plato.id} />
-
-        <ReviewsList platoId={plato.id} />
-      </View>
-    </ScrollView>
+      </Animated.ScrollView>
+    </FadeView>
   );
 }
 
