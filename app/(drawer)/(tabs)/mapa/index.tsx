@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, ActivityIndicator, Platform, TouchableOpacity } from "react-native";
+import { View, Text, ActivityIndicator, Platform, Pressable, TouchableOpacity } from "react-native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import * as Location from "expo-location";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColors } from "../../../../hooks/useThemeColors";
 import { zonas, zonasMap, type ZonaId } from "../../../../data/zonas";
-import { platos as localPlatos } from "../../../../data/platos";
 import { useCatalogStore, type Plato } from "../../../../store/catalog";
 import { useModerationStore } from "../../../../store/moderation";
 import { useNearbyPlaces } from "../../../../hooks/useNearbyPlaces";
 import MapFilters, { type PicoBand } from "../../../../components/MapFilters";
 import { openInMaps } from "../../../../utils/nativeMaps";
+import { platos as localPlatos } from "../../../../data/platos";
 
 const INITIAL_REGION: Region = {
   latitude: -16.5,
@@ -20,7 +20,8 @@ const INITIAL_REGION: Region = {
 };
 
 const DEFAULT_RADIUS_KM = 10;
-type Mode = "zonas" | "aprobados" | "lugares";
+
+type Mode = "zonas" | "platos" | "lugares";
 
 export default function MapaTab() {
   const { colors } = useThemeColors();
@@ -52,28 +53,12 @@ export default function MapaTab() {
 
   const allPlatos = useCatalogStore((s) => s.platos);
   const statusMap = useModerationStore((s) => s.statusMap);
-
   const [zonaSel, setZonaSel] = useState<ZonaId | "all">("all");
   const [picoSel, setPicoSel] = useState<PicoBand>("all");
+  const [onlyApproved, setOnlyApproved] = useState(false);
+  const [mode, setMode] = useState<Mode>(dishKey ? "lugares" : "platos");
 
-  const platosAprobados: Plato[] = useMemo(() => {
-  const source = (allPlatos && allPlatos.length ? allPlatos : localPlatos) as Plato[];
-  const base = source.filter((p) => (statusMap[p.id] ?? "approved") === "approved");
-  const zoneFiltered = zonaSel === "all" ? base : base.filter((p) => p.zona === zonaSel);
-  const picoFiltered = zoneFiltered.filter((p) => {
-    if (picoSel === "all") return true;
-    if (picoSel === "suave") return p.picosidad >= 1 && p.picosidad <= 2;
-    if (picoSel === "medio") return p.picosidad === 3;
-    return p.picosidad >= 4;
-  });
-  return picoFiltered;
-}, [allPlatos, statusMap, zonaSel, picoSel]);
-
-
-  const [mode, setMode] = useState<Mode>(dishKey ? "lugares" : "zonas");
-  useEffect(() => {
-    if (dishKey) setMode("lugares");
-  }, [dishKey]);
+  useEffect(() => { if (dishKey) setMode("lugares"); }, [dishKey]);
 
   const centerForQuery = useMemo(() => ({ lat: region.latitude, lng: region.longitude }), [region]);
   const { data: places = [], loading: loadingPlaces, error: errorPlaces } = useNearbyPlaces({
@@ -82,6 +67,26 @@ export default function MapaTab() {
     dishKey: dishKey || "",
   });
 
+  const platosVisibles: Plato[] = useMemo(() => {
+    const source = (allPlatos && allPlatos.length ? allPlatos : localPlatos) as Plato[];
+
+    const base = source.filter((p) => {
+      if (!onlyApproved) return true;
+      const st = statusMap[p.id] ?? "approved";
+      return st === "approved";
+    });
+
+    const zoneFiltered = zonaSel === "all" ? base : base.filter((p) => p.zona === zonaSel);
+
+    return zoneFiltered.filter((p) => {
+      if (picoSel === "all") return true;
+      if (picoSel === "suave") return p.picosidad >= 1 && p.picosidad <= 2;
+      if (picoSel === "medio") return p.picosidad === 3;
+      return p.picosidad >= 4;
+    });
+  }, [allPlatos, statusMap, zonaSel, picoSel, onlyApproved]);
+
+  // ---------- UI helpers ----------
   const OverlayCard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <View
       pointerEvents="box-none"
@@ -122,18 +127,20 @@ export default function MapaTab() {
     label: string;
     onPress: () => void;
   }) => (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       style={{
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 16,
         backgroundColor: active ? colors.primary : colors.surface,
+        borderWidth: 1,
+        borderColor: active ? colors.primary : colors.border,
         marginRight: 8,
       }}
     >
-      <Text style={{ color: active ? "#fff" : colors.subtitle, fontWeight: "700" }}>{label}</Text>
-    </TouchableOpacity>
+      <Text style={{ color: active ? "#fff" : colors.subtitle, fontWeight: "800" }}>{label}</Text>
+    </Pressable>
   );
 
   return (
@@ -159,54 +166,27 @@ export default function MapaTab() {
               description={z.lugarTipico}
               pinColor="#3366FF"
             >
-              <Callout
-                onPress={() =>
-                  openInMaps(z.centroid.latitude, z.centroid.longitude, z.lugarTipico)
-                }
-              >
+              <Callout onPress={() => openInMaps(z.centroid.latitude, z.centroid.longitude, z.lugarTipico)}>
                 <View style={{ maxWidth: 220 }}>
                   <Text style={{ fontWeight: "700" }}>{z.nombre}</Text>
                   <Text style={{ color: colors.muted }}>{z.lugarTipico}</Text>
-                  <Text style={{ marginTop: 6, color: colors.primary }}>
-                    Tocar para abrir en Mapas
-                  </Text>
+                  <Text style={{ marginTop: 6, color: colors.primary }}>Tocar para abrir en Mapas</Text>
                 </View>
               </Callout>
             </Marker>
           ))}
-
-        {mode === "aprobados" &&
-          platosAprobados.map((p) => {
+        
+        {mode === "platos" &&
+          platosVisibles.map((p) => {
             const z = zonasMap[p.zona];
             return (
               <Marker
                 key={`plato-${p.id}`}
-                coordinate={{
-                  latitude: z.centroid.latitude,
-                  longitude: z.centroid.longitude,
-                }}
+                coordinate={{ latitude: z.centroid.latitude, longitude: z.centroid.longitude }}
                 title={p.nombre}
                 description={`Zona: ${z.nombre}`}
                 pinColor="#E53935"
-              >
-                <Callout
-                  onPress={() =>
-                    openInMaps(
-                      z.centroid.latitude,
-                      z.centroid.longitude,
-                      `${p.nombre} - ${z.nombre}`
-                    )
-                  }
-                >
-                  <View style={{ maxWidth: 240 }}>
-                    <Text style={{ fontWeight: "700" }}>{p.nombre}</Text>
-                    <Text style={{ color: colors.muted }}>Zona: {z.nombre}</Text>
-                    <Text style={{ marginTop: 6, color: colors.primary }}>
-                      Tocar para abrir en Mapas
-                    </Text>
-                  </View>
-                </Callout>
-              </Marker>
+              />
             );
           })}
 
@@ -224,9 +204,7 @@ export default function MapaTab() {
                 <View style={{ maxWidth: 240 }}>
                   <Text style={{ fontWeight: "700" }}>{p.name}</Text>
                   {!!p.address && <Text style={{ color: colors.muted }}>{p.address}</Text>}
-                  <Text style={{ marginTop: 6, color: colors.primary }}>
-                    Tocar para abrir en Mapas
-                  </Text>
+                  <Text style={{ marginTop: 6, color: colors.primary }}>Tocar para abrir en Mapas</Text>
                 </View>
               </Callout>
             </Marker>
@@ -236,26 +214,37 @@ export default function MapaTab() {
       <OverlayCard>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={{ color: colors.text, fontWeight: "700", fontSize: 18 }}>Mapa</Text>
-          <Text style={{ color: colors.muted }}>
-            {locError ? "Ubicación desactivada" : ""}
-          </Text>
+          <Text style={{ color: colors.muted }}>{locError ? "Ubicación desactivada" : ""}</Text>
         </View>
 
         <View style={{ flexDirection: "row", marginTop: 8 }}>
           <ModeChip active={mode === "zonas"} label="Zonas" onPress={() => setMode("zonas")} />
-          <ModeChip
-            active={mode === "aprobados"}
-            label="Platos aprobados"
-            onPress={() => setMode("aprobados")}
-          />
+          <ModeChip active={mode === "platos"} label="Platos" onPress={() => setMode("platos")} />
           {dishKey ? (
-            <ModeChip
-              active={mode === "lugares"}
-              label="Lugares cercanos"
-              onPress={() => setMode("lugares")}
-            />
+            <ModeChip active={mode === "lugares"} label="Lugares cercanos" onPress={() => setMode("lugares")} />
           ) : null}
         </View>
+
+        {mode === "platos" && (
+          <View style={{ marginTop: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <Pressable
+              onPress={() => setOnlyApproved((v) => !v)}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 16,
+                backgroundColor: onlyApproved ? colors.primary : colors.surface,
+                borderWidth: 1,
+                borderColor: onlyApproved ? colors.primary : colors.border,
+              }}
+            >
+              <Text style={{ color: onlyApproved ? "#fff" : colors.subtitle, fontWeight: "800" }}>
+                {onlyApproved ? "Solo aprobados" : "Todos los platos"}
+              </Text>
+            </Pressable>
+            <Text style={{ color: colors.subtitle, fontWeight: "700" }}>{platosVisibles.length} platos</Text>
+          </View>
+        )}
 
         <View style={{ marginTop: 8 }}>
           <MapFilters
@@ -263,29 +252,21 @@ export default function MapaTab() {
             onZona={setZonaSel}
             picoSel={picoSel}
             onPico={setPicoSel}
-            disabled={mode !== "aprobados"}
+            disabled={mode !== "platos"}
           />
         </View>
+
+        {mode !== "platos" && (
+          <Text style={{ color: colors.subtitle, marginTop: 6, fontSize: 12 }}>
+            Los filtros aplican en “Platos”.
+          </Text>
+        )}
       </OverlayCard>
 
       {mode === "lugares" && dishKey && (
-        <View
-          style={{
-            position: "absolute",
-            left: 12,
-            right: 12,
-            bottom: Platform.OS === "android" ? 12 : 24,
-          }}
-        >
+        <View style={{ position: "absolute", left: 12, right: 12, bottom: Platform.OS === "android" ? 12 : 24 }}>
           {loadingPlaces ? (
-            <View
-              style={{
-                backgroundColor: colors.surface,
-                padding: 10,
-                borderRadius: 12,
-                alignSelf: "flex-start",
-              }}
-            >
+            <View style={{ backgroundColor: colors.surface, padding: 10, borderRadius: 12, alignSelf: "flex-start" }}>
               <ActivityIndicator />
             </View>
           ) : errorPlaces ? (
@@ -294,9 +275,7 @@ export default function MapaTab() {
             </View>
           ) : !places.length ? (
             <View style={{ backgroundColor: colors.surface, padding: 10, borderRadius: 12 }}>
-              <Text style={{ color: colors.text }}>
-                No hay lugares cercanos para este plato.
-              </Text>
+              <Text style={{ color: colors.text }}>No hay lugares cercanos para este plato.</Text>
             </View>
           ) : null}
         </View>
